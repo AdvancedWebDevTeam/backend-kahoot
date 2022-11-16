@@ -5,9 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "_lint": "eslint --config ./.eslintrc.json --ext js --ext jsx --ext tsx --ext ts",
-    "lint": "npm run _lint -- ./src/",
-    "lint:fix": "npm run _lint -- --fix ./src/",
+    "_lint": "eslint --config ./.eslintrc.json --ext js",
+    "lint": "npm run _lint -- ./",
+    "lint:fix": "npm run _lint -- --fix ./",
     "format": "prettier --write './**/*.{js,md,json}' --config ./.prettierrc"
   },
   "dependencies": {

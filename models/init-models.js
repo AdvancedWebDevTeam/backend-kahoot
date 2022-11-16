@@ -1,12 +1,11 @@
-var DataTypes = require("sequelize").DataTypes;
-var _users = require("./users");
+const { DataTypes } = require("sequelize");
+const _users = require("./users");
 
 function initModels(sequelize) {
-  var users = _users(sequelize, DataTypes);
-
+  const users = _users(sequelize, DataTypes);
 
   return {
-    users,
+    users
   };
 }
 module.exports = initModels;
