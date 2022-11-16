@@ -8,8 +8,7 @@
     "_lint": "eslint --config ./.eslintrc.json --ext js --ext jsx --ext tsx --ext ts",
     "lint": "npm run _lint -- ./src/",
     "lint:fix": "npm run _lint -- --fix ./src/",
-    "format": "prettier --write './**/*.{js,md,json}' --config ./.prettierrc",
-    "prepare": "husky install"
+    "format": "prettier --write './**/*.{js,md,json}' --config ./.prettierrc"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -30,14 +29,7 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.2",
-    "lint-staged": "^13.0.3",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --config ./.eslintrc.json --ext js --ext ts --ext jsx --ext tsx"
-    ]
   }
 }
