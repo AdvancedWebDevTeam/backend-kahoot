@@ -8,7 +8,7 @@
     "_lint": "eslint --config ./.eslintrc.json --ext js --ext jsx --ext tsx --ext ts",
     "lint": "npm run _lint -- ./src/",
     "lint:fix": "npm run _lint -- --fix ./src/",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,scss,md,json}' --config ./.prettierrc",
+    "format": "prettier --write './**/*.{js,md,json}' --config ./.prettierrc",
     "prepare": "husky install"
   },
   "dependencies": {
