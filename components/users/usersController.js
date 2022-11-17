@@ -39,7 +39,7 @@ exports.registerUser = async (req, res) => {
       email,
       password
     );
-    const url = `${process.env.BASE_URL}/:${result.user.users_id}/verify/:${result.user.tokens}`;
+    const url = `${process.env.BASE_URL}/${result.user.users_id}/verify/${result.user.tokens}`;
     await sendEmail(result.user.email, "Verify email", url);
     res.status(201).json("An email has sent to verify your account");
   } else {
@@ -48,10 +48,8 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.updateVerify = async (req, res) => {
-  const id = req.params.id.replace(":", "");
+  const id = req.params.id;
   const user = await usersService.getUserByID(id);
-  // console.log('Hello VERIFY')
-  // console.log(req.params.id)
   if (user.users_id === null || user.tokens === null) {
     res.json(500).json("Invalid server");
   } else {
