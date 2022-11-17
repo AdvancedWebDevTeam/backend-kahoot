@@ -1,67 +1,63 @@
-const { models } = require('../../models')
-const { sequelize } = require('../../models/index')
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const randomstring = require("randomstring");
+const { models } = require("../../models");
+const { sequelize } = require("../../models/index");
 
 exports.getUsers = async () => {
-    const result = await models.users.findAll({
-        raw: true
-    });
+  const result = await models.users.findAll({
+    raw: true
+  });
 
-    return result
-}
-
+  return result;
+};
 
 exports.checkUsers = async (email) => {
+  const result = await models.users.findOne({
+    attributes: ["users_id", "users_name", "email"],
+    where: { email },
+    raw: true
+  });
 
-
-    const result = await models.users.findOne({
-        attributes: ['users_id', 'users_name', 'email'],
-        where: { email: email },
-        raw: true
-    });
-
-    return result;
-}
+  return result;
+};
 
 exports.getUserByID = async (ID) => {
+  const result = await models.users.findOne({
+    attributes: ["users_id", "users_name", "email", "tokens"],
+    where: { users_id: ID },
+    raw: true
+  });
 
-    const result = await models.users.findOne({
-        attributes: ['users_id', 'users_name', 'email', 'tokens'],
-        where: { users_id: ID },
-        raw: true
-    });
-
-    return result;
-}
+  return result;
+};
 
 exports.registerUsers = async (users_name, email, password) => {
+  await sequelize.query("call sp_addidusers()", {}).then((v) => console.log(v));
 
-    await sequelize
-        .query('call sp_addidusers()',
-            {})
-        .then(v => console.log(v));
+  const user = await models.users.findOne({
+    attributes: ["users_id"],
+    where: { users_password: null },
+    raw: true
+  });
 
-    const user = await models.users.findOne({
-        attributes: ['users_id'],
-        where: { users_password: null },
-        raw: true
-    })
+  const userID = user.users_id;
+  const hashPass = await bcrypt.hash(password, 10);
 
-    const userID = user.users_id;
-    const hashPass = await bcrypt.hash(password, 10)
+  const currentdate = new Date();
+  const createAt = `${currentdate.getFullYear()}-${
+    currentdate.getMonth() + 1
+  }-${currentdate.getDate()}`;
+  const someDate = new Date();
+  const numberOfDaysToAdd = 30;
+  const result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+  const expiredDate = new Date(result);
+  const expireAt = `${expiredDate.getFullYear()}-${
+    expiredDate.getMonth() + 1
+  }-${expiredDate.getDate()}`;
 
-    const currentdate = new Date();
-    const createAt =  currentdate.getFullYear() + "-" + (currentdate.getMonth() + 1) + "-" + currentdate.getDate()
-    const someDate = new Date();
-    const numberOfDaysToAdd = 30;
-    const result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
-    const expiredDate = new Date(result);
-    const expireAt =  expiredDate.getFullYear() + "-" + (expiredDate.getMonth() + 1) + "-" + expiredDate.getDate()
-    
-    const token = randomstring.generate(32);
+  const token = randomstring.generate(32);
 
-    const query_update = `update users set 
+  const query_update = `update users set 
     users_name = '${users_name}', 
     email = '${email}', 
     users_password = '${hashPass}',
@@ -69,29 +65,22 @@ exports.registerUsers = async (users_name, email, password) => {
     expire_at = '${expireAt}',
     tokens = '${token}' where users_id = '${userID}'`;
 
+  await sequelize.query(query_update, {}).then((v) => console.log(v));
 
-    await sequelize
-        .query(query_update,
-            {})
-        .then(v => console.log(v));
+  const new_user = await models.users.findOne({
+    attributes: ["users_id", "users_name", "email", "tokens"],
+    where: { users_id: userID },
+    raw: true
+  });
 
-    const new_user = await models.users.findOne({
-        attributes: ['users_id', 'users_name', 'email', 'tokens'],
-        where: { users_id: userID },
-        raw: true
-    })
-    
-    return {
-        is_success: true,
-        user: new_user
-    }
-}
+  return {
+    is_success: true,
+    user: new_user
+  };
+};
 
 exports.updateVerify = async (id) => {
-    const query_update = `update users set is_verified = true where users_id = '${id}'`
-    
-    await sequelize
-        .query(query_update,
-            {})
-        .then(v => console.log(v)); 
-}
+  const query_update = `update users set is_verified = true where users_id = '${id}'`;
+
+  await sequelize.query(query_update, {}).then((v) => console.log(v));
+};
