@@ -13,8 +13,8 @@ exports.getUsers = async () => {
 
 exports.checkUsers = async (email) => {
   const result = await models.users.findOne({
-    attributes: ["users_id", "users_name", "email"],
-    where: { email },
+    attributes: ["users_id", "users_name", "email", "users_password"],
+    where: { email: email },
     raw: true
   });
 
