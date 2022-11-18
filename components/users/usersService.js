@@ -84,3 +84,47 @@ exports.updateVerify = async (id) => {
 
   await sequelize.query(query_update, {}).then((v) => console.log(v));
 };
+
+exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
+
+  await sequelize.query("call sp_addidusers()", {}).then((v) => console.log(v));
+
+  const user = await models.users.findOne({
+    attributes: ["users_id"],
+    where: { users_password: null },
+    raw: true
+  });
+
+  const userID = user.users_id;
+
+  const currentdate = new Date();
+  const createAt = `${currentdate.getFullYear()}-${
+    currentdate.getMonth() + 1
+  }-${currentdate.getDate()}`;
+  const someDate = new Date();
+  const numberOfDaysToAdd = 30;
+  const result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+  const expiredDate = new Date(result);
+  const expireAt = `${expiredDate.getFullYear()}-${
+    expiredDate.getMonth() + 1
+  }-${expiredDate.getDate()}`;
+
+  const token = randomstring.generate(32);
+
+  const query_update = `update users set 
+    users_name = '${users_name}', 
+    email = '${email}', 
+    create_at = '${createAt}',
+    expire_at = '${expireAt}',
+    tokens = '${token}' where users_id = '${userID}'`;
+
+  await sequelize.query(query_update, {}).then((v) => console.log(v));
+
+  const new_user = await models.users.findOne({
+    attributes: ["users_id", "users_name", "email", "tokens"],
+    where: { users_id: userID },
+    raw: true
+  });
+
+  return new_user;
+}
