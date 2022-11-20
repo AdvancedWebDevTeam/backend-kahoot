@@ -48,7 +48,7 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.updateVerify = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const user = await usersService.getUserByID(id);
   if (user.users_id === null || user.tokens === null) {
     res.json(500).json("Invalid server");

@@ -14,7 +14,7 @@ exports.getUsers = async () => {
 exports.checkUsers = async (email) => {
   const result = await models.users.findOne({
     attributes: ["users_id", "users_name", "email", "users_password"],
-    where: { email: email },
+    where: { email },
     raw: true
   });
 
@@ -86,7 +86,6 @@ exports.updateVerify = async (id) => {
 };
 
 exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
-
   await sequelize.query("call sp_addidusers()", {}).then((v) => console.log(v));
 
   const user = await models.users.findOne({
@@ -127,4 +126,4 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
   });
 
   return new_user;
-}
+};
