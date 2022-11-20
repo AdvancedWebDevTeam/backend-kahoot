@@ -21,6 +21,6 @@ module.exports = async (email, subject, text) => {
       text
     });
   } catch (err) {
-    console.log(`Error transporter: ${err}`);
+    // console.log(`Error transporter: ${err}`);
   }
 };
