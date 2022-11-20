@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const passport = require("./passport");
 const authController = require("./authController");
-require("dotenv").config();
 
 router.post(
   "/login",

@@ -1,5 +1,4 @@
 const authService = require("./authService");
-require("dotenv").config();
 
 exports.login = async (req, res) => {
   // console.log(`AUTH CONTROLLER: ${req.user}`);

@@ -1,6 +1,5 @@
 const usersService = require("./usersService");
 const sendEmail = require("./sendEmail");
-require("dotenv").config();
 
 exports.getUser = async (req, res) => {
   const result = await usersService.getUsers();

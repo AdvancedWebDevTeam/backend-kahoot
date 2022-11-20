@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 var http = require('http');
-require('dotenv').config();
+require('dotenv').config({path: './.env.local'});
 const { sequelize } = require('../models/index');
 
 // connect database

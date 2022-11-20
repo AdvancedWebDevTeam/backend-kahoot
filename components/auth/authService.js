@@ -1,5 +1,4 @@
 const JWT = require("jsonwebtoken");
-require("dotenv").config();
 
 exports.JWT_Sign = (user) => {
   // console.log(`AUTH SERVICE: ${user}`);

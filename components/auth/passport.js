@@ -4,7 +4,6 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const { ExtractJwt } = require("passport-jwt");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const bcrypt = require("bcrypt");
-require("dotenv").config();
 const usersService = require("../users/usersService");
 
 function validPassword(user, password) {
