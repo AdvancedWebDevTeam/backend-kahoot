@@ -20,3 +20,8 @@ benchmarks/graphs
 
 # .idea
 .idea
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

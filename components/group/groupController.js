@@ -1,11 +1,20 @@
-export function assignRoleInGroup() {}
+function assignRoleInGroup() {}
 
-export function getSpecificUserInGroup() {}
+function getSpecificUserInGroup() {}
 
-export function getUsersInGroup() {}
+function getUsersInGroup() {}
 
-export function getGroupDetails() {}
+function getGroupDetails() {}
 
-export function getListOfGroups() {}
+function getListOfGroups() {}
 
-export function createGroup() {}
+function createGroup() {}
+
+module.exports = {
+  createGroup,
+  getListOfGroups,
+  getGroupDetails,
+  getUsersInGroup,
+  getSpecificUserInGroup,
+  assignRoleInGroup
+};
