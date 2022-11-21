@@ -5,7 +5,11 @@ function assignRoleInGroup() {}
 
 function getSpecificUserInGroup() {}
 
-function getUsersInGroup() {}
+async function getUsersInGroup(req, res) {
+  const { groupId } = req.params;
+  const users = await groupService.getAllUsersInGroup(groupId);
+  res.status(200).json(users);
+}
 
 async function getGroupDetails(req, res) {
   const group = await groupService.getSpecificGroup(req.params.id);

@@ -32,8 +32,26 @@ async function getSpecificGroup(id) {
   });
 }
 
+async function getAllUsersInGroup(groupId) {
+  const usersId = await models.roles_groups_users.findAll({
+    attributes: ["users_id"],
+    where: {
+      groups_id: groupId
+    }
+  });
+  const userIdArray = usersId.map((model) => model.users_id);
+
+  return models.users.findAll({
+    attributes: ["users_name", "email"],
+    where: {
+      users_id: userIdArray
+    }
+  });
+}
+
 module.exports = {
   createNewGroup,
   getGroupsInDB,
-  getSpecificGroup
+  getSpecificGroup,
+  getAllUsersInGroup
 };
