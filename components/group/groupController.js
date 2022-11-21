@@ -10,8 +10,8 @@ function getUsersInGroup() {}
 function getGroupDetails() {}
 
 async function getListOfGroups(_, res) {
-  const groups = await groupService.getGroupsInDB();
-  res.status(200).json(groups);
+  const list = await groupService.getGroupsInDB();
+  res.status(200).json(list);
 }
 
 async function createGroup(req, res) {
