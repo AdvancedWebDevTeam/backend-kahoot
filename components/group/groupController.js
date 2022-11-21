@@ -7,7 +7,14 @@ function getSpecificUserInGroup() {}
 
 function getUsersInGroup() {}
 
-function getGroupDetails() {}
+async function getGroupDetails(req, res) {
+  const group = await groupService.getSpecificGroup(req.params.id);
+  if (group) {
+    res.status(200).json(group);
+  } else {
+    res.status(404).json({ message: "Group not found" });
+  }
+}
 
 async function getListOfGroups(_, res) {
   const list = await groupService.getGroupsInDB();

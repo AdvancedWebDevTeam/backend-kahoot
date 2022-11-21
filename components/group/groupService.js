@@ -24,7 +24,16 @@ async function getGroupsInDB() {
   return models.kahoot_groups.findAll();
 }
 
+async function getSpecificGroup(id) {
+  return models.kahoot_groups.findOne({
+    where: {
+      groups_id: id
+    }
+  });
+}
+
 module.exports = {
   createNewGroup,
-  getGroupsInDB
+  getGroupsInDB,
+  getSpecificGroup
 };
