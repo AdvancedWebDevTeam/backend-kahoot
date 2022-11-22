@@ -63,8 +63,21 @@ async function updateRoleInGroup(
   throw new Error("User does not have a role in group", { cause: "client" });
 }
 
+async function joinGrByLink(groupId, userId) {
+  const userRoleInGroup = await getUserRoleInGroup(groupId, userId);
+
+  if (userRoleInGroup === null) {
+    // TODO: remove raw query if possible
+    await queryUpdateRoleInGroup(groupId, userId, 3);
+    userRoleInGroup.roles_id = 3;
+    return userRoleInGroup;
+  }
+  return userRoleInGroup;
+}
+
 module.exports = {
   assignNewRoleInGroup,
   existsRoleOfId,
-  updateRoleInGroup
+  updateRoleInGroup,
+  joinGrByLink
 };

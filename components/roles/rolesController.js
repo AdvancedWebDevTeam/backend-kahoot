@@ -1,6 +1,6 @@
 const { getUserByID } = require("../users/usersService");
 const { existsGroupOfId } = require("../group/groupService");
-const { existsRoleOfId, updateRoleInGroup } = require("./rolesService");
+const { existsRoleOfId, updateRoleInGroup, joinGrByLink } = require("./rolesService");
 
 async function allIdExist(groupId, userId, roleId) {
   const user = await getUserByID(userId);
@@ -33,6 +33,19 @@ async function assignRoleInGroup(req, res) {
   }
 }
 
+async function joinGroupByLink(req, res) {
+  const { groupId, userId } = req.params;
+
+  try {
+    const role = await joinGrByLink(groupId, userId);
+    res.status(200).json(role);
+  } catch (err) {
+    const status = err.cause === "server" ? 500 : 400;
+    res.status(status).json({ message: err.message });
+  }
+}
+
 module.exports = {
-  assignRoleInGroup
+  assignRoleInGroup,
+  joinGroupByLink
 };
