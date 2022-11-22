@@ -9,6 +9,7 @@ const indexRouter = require("./components/home/index");
 const usersRouter = require("./components/users/usersRouter");
 const authRouter = require("./components/auth/authRouter");
 const groupRouter = require("./components/group/groupRouter");
+const rolesRouter = require("./components/roles/rolesRouter");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/groups", groupRouter);
+app.use("/roles", rolesRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

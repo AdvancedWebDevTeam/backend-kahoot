@@ -10,6 +10,5 @@ router.get("/:id", groupController.getGroupDetails);
 
 router.get("/:groupId/users", groupController.getUsersInGroup);
 router.get("/:groupId/users/:userId", groupController.getSpecificUserInGroup);
-router.post("/:groupId/user/assign_role", groupController.assignRoleInGroup);
 
 module.exports = router;

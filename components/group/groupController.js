@@ -1,9 +1,17 @@
 const groupService = require("./groupService");
 const roleService = require("../roles/rolesService");
 
-function assignRoleInGroup() {}
+async function getSpecificUserInGroup(req, res) {
+  const { groupId, userId } = req.params;
+  const users = await groupService.getAllUsersInGroup(groupId);
+  const user = users.find((u) => u.users_id === userId);
 
-function getSpecificUserInGroup() {}
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+}
 
 async function getUsersInGroup(req, res) {
   const { groupId } = req.params;
@@ -12,7 +20,7 @@ async function getUsersInGroup(req, res) {
 }
 
 async function getGroupDetails(req, res) {
-  const group = await groupService.getSpecificGroup(req.params.id);
+  const group = await groupService.getGroupById(req.params.id);
   if (group) {
     res.status(200).json(group);
   } else {
@@ -43,6 +51,5 @@ module.exports = {
   getListOfGroups,
   getGroupDetails,
   getUsersInGroup,
-  getSpecificUserInGroup,
-  assignRoleInGroup
+  getSpecificUserInGroup
 };
