@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
 
 module.exports = async (email, subject, text) => {
   try {
@@ -21,6 +20,6 @@ module.exports = async (email, subject, text) => {
       text
     });
   } catch (err) {
-    console.log(`Error transporter: ${err}`);
+    // console.log(`Error transporter: ${err}`);
   }
 };

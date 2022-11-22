@@ -11,7 +11,17 @@ coverage
 # Benchmarking
 benchmarks/graphs
 
+# env
 .env
 .env.development.local
 .env.test.local
 .env.production.local
+.env.local
+
+# .idea
+.idea
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
