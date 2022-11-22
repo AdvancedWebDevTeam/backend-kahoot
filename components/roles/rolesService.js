@@ -1,4 +1,4 @@
-const { models } = require("../../models");
+const { models, sequelize } = require("../../models");
 
 async function assignNewRoleInGroup(groupId, userId, roleId) {
   const assignRole = await models.roles_groups_users.create({
@@ -31,8 +31,15 @@ async function getUserRoleInGroup(groupId, userId) {
     where: {
       groups_id: groupId,
       users_id: userId
-    }
+    },
+    raw: true
   });
+}
+
+async function queryUpdateRoleInGroup(groupId, userId, roleId) {
+  return sequelize.query(
+    `UPDATE roles_groups_users SET roles_id = ${roleId} WHERE groups_id = "${groupId}" AND users_id = "${userId}"`
+  );
 }
 
 async function updateRoleInGroup(
@@ -41,17 +48,12 @@ async function updateRoleInGroup(
   roleId,
   createNewIfNotExists
 ) {
-  const userRoleInGroup = await models.roles_groups_users.findOne({
-    where: {
-      groups_id: groupId,
-      users_id: userId
-    }
-  });
+  const userRoleInGroup = await getUserRoleInGroup(groupId, userId);
 
   if (userRoleInGroup !== null) {
-    // TODO: Find solution, cannot update role yet bc roles_id is primary key
+    // TODO: remove raw query if possible
+    await queryUpdateRoleInGroup(groupId, userId, roleId);
     userRoleInGroup.roles_id = roleId;
-    await userRoleInGroup.save();
     return userRoleInGroup;
   }
 
