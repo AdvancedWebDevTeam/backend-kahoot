@@ -31,6 +31,18 @@ exports.getUserByID = async (ID) => {
   return result;
 };
 
+exports.getUserProfile = async (ID) => {
+  let query = `select u.users_name, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name
+                from users as u, kahoot_groups as k, roles as r, roles_groups_users as rgu
+                where u.users_id = '${ID}' and u.users_id = rgu.users_id and rgu.groups_id = k.groups_id and rgu.roles_id = r.roles_id`;
+  const result = await sequelize.query(query, function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+  });
+
+  return result;
+};
+
 exports.registerUsers = async (users_name, email, password) => {
   await sequelize.query("call sp_addidusers()", {}).then((v) => console.log(v));
 
