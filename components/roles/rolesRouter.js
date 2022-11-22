@@ -5,4 +5,6 @@ const rolesController = require("./rolesController");
 
 router.put("/", rolesController.assignRoleInGroup);
 
+router.put("/:groupId/:userId", rolesController.joinGroupByLink);
+
 module.exports = router;
