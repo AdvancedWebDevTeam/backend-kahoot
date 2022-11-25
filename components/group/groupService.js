@@ -57,10 +57,30 @@ async function getAllUsersInGroup(groupId) {
   });
 }
 
+async function getGroupsOfUser(userId) {
+  // get groupIds of groups that user is in
+  const groupsId = await models.roles_groups_users.findAll({
+    attributes: ["groups_id"],
+    where: {
+      users_id: userId
+    },
+    raw: true
+  });
+  const groupIdArray = groupsId.map((model) => model.groups_id);
+
+  // from groupIds, get more info about each group
+  return models.kahoot_groups.findAll({
+    where: {
+      groups_id: groupIdArray
+    }
+  });
+}
+
 module.exports = {
   createNewGroup,
   getGroupsInDB,
   getGroupById,
   getAllUsersInGroup,
-  existsGroupOfId
+  existsGroupOfId,
+  getGroupsOfUser
 };
