@@ -43,3 +43,8 @@ exports.updateVerify = async (req, res) => {
     res.status(201).json(user);
   }
 };
+
+exports.getAllUsers = async (_, res) => {
+  const result = await usersService.getAllUsers();
+  res.status(200).json(result);
+};

@@ -32,7 +32,7 @@ exports.getUserByID = async (ID) => {
 };
 
 exports.getUserProfile = async (ID) => {
-  let query = `select u.users_name, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name
+  const query = `select u.users_name, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name
                 from users as u, kahoot_groups as k, roles as r, roles_groups_users as rgu
                 where u.users_id = '${ID}' and u.users_id = rgu.users_id and rgu.groups_id = k.groups_id and rgu.roles_id = r.roles_id`;
   const result = await sequelize.query(query, function (err, result, fields) {
@@ -138,4 +138,11 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
   });
 
   return new_user;
+};
+
+exports.getAllUsers = async () => {
+  return models.users.findAll({
+    attributes: ["users_id", "users_name", "email"],
+    raw: true
+  });
 };
