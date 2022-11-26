@@ -32,15 +32,38 @@ exports.getUserByID = async (ID) => {
 };
 
 exports.getUserProfile = async (ID) => {
-  const query = `select u.users_name, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name
-                from users as u, kahoot_groups as k, roles as r, roles_groups_users as rgu
-                where u.users_id = '${ID}' and u.users_id = rgu.users_id and rgu.groups_id = k.groups_id and rgu.roles_id = r.roles_id`;
+  let query = `select u.users_name, u.email, u.users_password, u.create_at, u.expire_at, k.groups_name, r.roles_name 
+  from users u
+  left join roles_groups_users rgu
+  on u.users_id = rgu.users_id
+  left join roles r
+  on rgu.roles_id = r.roles_id
+  left join kahoot_groups k
+  on rgu.groups_id = k.groups_id
+  where u.users_id = "${ID}";`;
   const result = await sequelize.query(query, function (err, result, fields) {
     if (err) throw err;
     console.log(result);
   });
 
-  return result;
+  return result[0];
+};
+
+exports.updateUserProfile = async (ID, username, email) => {
+  const currentdate = new Date();
+  const createAt = `${currentdate.getFullYear()}-${currentdate.getMonth() + 1
+    }-${currentdate.getDate()}`;
+  const query_update = `update users set 
+    users_name = '${username}', 
+    email = '${email}',
+    create_at = '${createAt}'
+    where users_id = '${ID}'`;
+  try {
+    await sequelize.query(query_update, {});
+    return "Update user success!"
+  } catch (err) {
+    return "Fail to update user!"
+  }
 };
 
 exports.registerUsers = async (users_name, email, password) => {
@@ -56,16 +79,14 @@ exports.registerUsers = async (users_name, email, password) => {
   const hashPass = await bcrypt.hash(password, 10);
 
   const currentdate = new Date();
-  const createAt = `${currentdate.getFullYear()}-${
-    currentdate.getMonth() + 1
-  }-${currentdate.getDate()}`;
+  const createAt = `${currentdate.getFullYear()}-${currentdate.getMonth() + 1
+    }-${currentdate.getDate()}`;
   const someDate = new Date();
   const numberOfDaysToAdd = 30;
   const result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
   const expiredDate = new Date(result);
-  const expireAt = `${expiredDate.getFullYear()}-${
-    expiredDate.getMonth() + 1
-  }-${expiredDate.getDate()}`;
+  const expireAt = `${expiredDate.getFullYear()}-${expiredDate.getMonth() + 1
+    }-${expiredDate.getDate()}`;
 
   const token = randomstring.generate(32);
 
@@ -109,16 +130,14 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
   const userID = user.users_id;
 
   const currentdate = new Date();
-  const createAt = `${currentdate.getFullYear()}-${
-    currentdate.getMonth() + 1
-  }-${currentdate.getDate()}`;
+  const createAt = `${currentdate.getFullYear()}-${currentdate.getMonth() + 1
+    }-${currentdate.getDate()}`;
   const someDate = new Date();
   const numberOfDaysToAdd = 30;
   const result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
   const expiredDate = new Date(result);
-  const expireAt = `${expiredDate.getFullYear()}-${
-    expiredDate.getMonth() + 1
-  }-${expiredDate.getDate()}`;
+  const expireAt = `${expiredDate.getFullYear()}-${expiredDate.getMonth() + 1
+    }-${expiredDate.getDate()}`;
 
   const token = randomstring.generate(32);
 
