@@ -89,10 +89,15 @@ async function joinGrByLink(groupId, userId) {
   return userRoleInGroup;
 }
 
+async function getAllAvailableRoles() {
+  return models.roles.findAll();
+}
+
 module.exports = {
   assignNewRoleInGroup,
   existsRoleOfId,
   updateRoleInGroup,
   joinGrByLink,
-  assignRoleToMultipleUsersInGroup
+  assignRoleToMultipleUsersInGroup,
+  getAllAvailableRoles
 };
