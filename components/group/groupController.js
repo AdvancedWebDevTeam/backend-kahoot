@@ -14,9 +14,14 @@ async function getSpecificUserInGroup(req, res) {
 }
 
 async function getUsersInGroup(req, res) {
-  const { groupId } = req.params;
-  const users = await groupService.getAllUsersInGroup(groupId);
-  res.status(200).json(users);
+  try{
+    const { groupId } = req.params;
+    const users = await groupService.getAllUsersInGroup(groupId);
+    res.status(200).json(users);
+  } catch (e) {
+    const status = e.cause === "server" ? 500 : 400;
+    res.status(status).json({ message: e.message });
+  }
 }
 
 async function getGroupDetails(req, res) {
