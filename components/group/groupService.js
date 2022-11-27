@@ -38,21 +38,40 @@ async function existsGroupOfId(groupId) {
 }
 
 async function getAllUsersInGroup(groupId) {
-  // get userIds of users in group
   const usersId = await models.roles_groups_users.findAll({
-    attributes: ["users_id"],
     where: {
       groups_id: groupId
     },
+    include: ["role", "user"],
     raw: true
   });
-  const userIdArray = usersId.map((model) => model.users_id);
 
-  // from userIds, get more info about each user
-  return models.users.findAll({
-    attributes: ["users_id", "users_name", "email"],
+  return usersId.map((model) => {
+    return {
+      userId: model.users_id,
+      username: model["user.users_name"],
+      email: model["user.email"],
+      roleId: model.roles_id,
+      roleName: model["role.roles_name"]
+    };
+  });
+}
+
+async function getGroupsOfUser(userId) {
+  // get groupIds of groups that user is in
+  const groupsId = await models.roles_groups_users.findAll({
+    attributes: ["groups_id"],
     where: {
-      users_id: userIdArray
+      users_id: userId
+    },
+    raw: true
+  });
+  const groupIdArray = groupsId.map((model) => model.groups_id);
+
+  // from groupIds, get more info about each group
+  return models.kahoot_groups.findAll({
+    where: {
+      groups_id: groupIdArray
     }
   });
 }
@@ -62,5 +81,6 @@ module.exports = {
   getGroupsInDB,
   getGroupById,
   getAllUsersInGroup,
-  existsGroupOfId
+  existsGroupOfId,
+  getGroupsOfUser
 };

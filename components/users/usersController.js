@@ -68,6 +68,11 @@ exports.updateVerify = async (req, res) => {
   }
 };
 
+exports.getAllUsers = async (_, res) => {
+  const result = await usersService.getAllUsers();
+  res.status(200).json(result);
+};
+
 exports.checkPassword = async (req, res) => {
   const {id} = req.params;
   const { password } = req.body;

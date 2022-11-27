@@ -1,18 +1,5 @@
 const { models, sequelize } = require("../../models");
 
-async function assignNewRoleInGroup(groupId, userId, roleId) {
-  const assignRole = await models.roles_groups_users.create({
-    groups_id: groupId,
-    users_id: userId,
-    roles_id: roleId
-  });
-
-  if (assignRole instanceof models.roles_groups_users) {
-    return assignRole;
-  }
-  throw new Error("Failed to assign new role in group", { cause: "server" });
-}
-
 async function getRoleById(roleId) {
   return models.roles.findOne({
     where: {
@@ -34,6 +21,33 @@ async function getUserRoleInGroup(groupId, userId) {
     },
     raw: true
   });
+}
+
+async function assignNewRoleInGroup(groupId, userId, roleId) {
+  const assignRole = await models.roles_groups_users.create({
+    groups_id: groupId,
+    users_id: userId,
+    roles_id: roleId
+  });
+
+  if (assignRole instanceof models.roles_groups_users) {
+    return assignRole;
+  }
+  throw new Error("Failed to assign new role in group", { cause: "server" });
+}
+
+async function assignRoleToMultipleUsersInGroup(groupsId, userIds, roleId) {
+  try {
+    await sequelize.transaction(async () => {
+      for (let i = 0; i < userIds.length; i += 1) {
+        await assignNewRoleInGroup(groupsId, userIds[i], roleId);
+      }
+    });
+  } catch (e) {
+    throw new Error("Failed to assign role to multiple users", {
+      cause: "client"
+    });
+  }
 }
 
 async function queryUpdateRoleInGroup(groupId, userId, roleId) {
@@ -75,9 +89,15 @@ async function joinGrByLink(groupId, userId) {
   return userRoleInGroup;
 }
 
+async function getAllAvailableRoles() {
+  return models.roles.findAll();
+}
+
 module.exports = {
   assignNewRoleInGroup,
   existsRoleOfId,
   updateRoleInGroup,
-  joinGrByLink
+  joinGrByLink,
+  assignRoleToMultipleUsersInGroup,
+  getAllAvailableRoles
 };

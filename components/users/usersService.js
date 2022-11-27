@@ -185,3 +185,10 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
 
   return new_user;
 };
+
+exports.getAllUsers = async () => {
+  return models.users.findAll({
+    attributes: ["users_id", "users_name", "email"],
+    raw: true
+  });
+};
