@@ -10,6 +10,8 @@ router.post("/", usersController.registerUser);
 
 router.get("/:id", usersController.getUserProfile);
 
+router.get("/:id/checkpass", usersController.checkPassword);
+
 router.put("/update", usersController.updateUserProfile);
 
 router.get("/:id/verify/:token", usersController.updateVerify);

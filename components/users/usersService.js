@@ -32,7 +32,7 @@ exports.getUserByID = async (ID) => {
 };
 
 exports.getUserProfile = async (ID) => {
-  let query = `select u.users_name, u.email, u.users_password, u.create_at, u.expire_at, k.groups_name, r.roles_name 
+  const query = `select u.users_name, u.users_password, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name 
   from users u
   left join roles_groups_users rgu
   on u.users_id = rgu.users_id
@@ -49,14 +49,27 @@ exports.getUserProfile = async (ID) => {
   return result[0];
 };
 
-exports.updateUserProfile = async (ID, username, email) => {
+exports.updateUserProfile = async (ID, username, email, password) => {
   const currentdate = new Date();
   const createAt = `${currentdate.getFullYear()}-${currentdate.getMonth() + 1
     }-${currentdate.getDate()}`;
+  const user = await models.users.findOne({
+    attributes: ["users_password"],
+    where: { users_id: ID },
+    raw: true
+  });
+  let hash = await bcrypt.hash(password, 10);
+  if (user.users_password === password) {
+    hash = password;
+  }
+  else if (!bcrypt.compare(password, user.users_password)) {
+    hash = user.users_password;
+  }
   const query_update = `update users set 
     users_name = '${username}', 
     email = '${email}',
-    create_at = '${createAt}'
+    create_at = '${createAt}',
+    users_password = '${hash}'
     where users_id = '${ID}'`;
   try {
     await sequelize.query(query_update, {});
@@ -116,6 +129,20 @@ exports.updateVerify = async (id) => {
   const query_update = `update users set is_verified = true where users_id = '${id}'`;
 
   await sequelize.query(query_update, {}).then((v) => console.log(v));
+};
+
+exports.CheckPassword = async (id, password) => {
+  const user = await models.users.findOne({
+    attributes: ["users_id", "users_password"],
+    where: { users_id: id },
+    raw: true
+  });
+  if (!user) {
+    return;
+  }
+  else {
+    return bcrypt.compare(password, user.users_password);
+  }
 };
 
 exports.resgisterUsersByGoogleAccount = async (users_name, email) => {

@@ -10,8 +10,8 @@ exports.getUserProfile = async (req, res) => {
   const ID = req.params.id;
   user = {
     users_name: "",
-    email: "",
     users_password: "",
+    email: "",
     create_at: "",
     expire_at: "",
     groups_name: [],
@@ -20,8 +20,8 @@ exports.getUserProfile = async (req, res) => {
   const result = await usersService.getUserProfile(ID);
   result.map(function (x){
     user.users_name = x.users_name;
-    user.email = x.email;
     user.users_password = x.users_password;
+    user.email = x.email;
     user.create_at = x.create_at;
     user.expire_at = x.expire_at;
     user.groups_name.push(x.groups_name);
@@ -31,8 +31,8 @@ exports.getUserProfile = async (req, res) => {
 };
 
 exports.updateUserProfile = async (req, res) => {
-  const {users_id, users_name, email} = req.body;
-  const result = await usersService.updateUserProfile(users_id, users_name, email);
+  const {users_id, users_name, email, password} = req.body;
+  const result = await usersService.updateUserProfile(users_id, users_name, email, password);
   res.json(result);
 };
 
@@ -65,5 +65,16 @@ exports.updateVerify = async (req, res) => {
   } else {
     await usersService.updateVerify(id);
     res.status(201).json(user);
+  }
+};
+
+exports.checkPassword = async (req, res) => {
+  const {id} = req.params;
+  const { password } = req.body;
+  const user = await usersService.CheckPassword(id, password);
+  if (!user) {
+    res.json("Wrong password");
+  } else {
+    res.json("Right password");
   }
 };
