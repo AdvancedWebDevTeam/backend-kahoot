@@ -32,21 +32,13 @@ exports.getUserByID = async (ID) => {
 };
 
 exports.getUserProfile = async (ID) => {
-  const query = `select u.users_name, u.users_password, u.email, u.create_at, u.expire_at, k.groups_name, r.roles_name 
-  from users u
-  left join roles_groups_users rgu
-  on u.users_id = rgu.users_id
-  left join roles r
-  on rgu.roles_id = r.roles_id
-  left join kahoot_groups k
-  on rgu.groups_id = k.groups_id
-  where u.users_id = "${ID}";`;
-  const result = await sequelize.query(query, function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
+  const result = await models.users.findOne({
+    attributes: ["users_name", "email", "users_password"],
+    where: { users_id: ID },
+    raw: true
   });
 
-  return result[0];
+  return result;
 };
 
 exports.updateUserProfile = async (ID, username, email, password) => {
@@ -131,17 +123,17 @@ exports.updateVerify = async (id) => {
   await sequelize.query(query_update, {}).then((v) => console.log(v));
 };
 
-exports.CheckPassword = async (id, password) => {
-  const user = await models.users.findOne({
+exports.CheckPassword = async (id, value) => {
+  const result = await models.users.findOne({
     attributes: ["users_id", "users_password"],
     where: { users_id: id },
     raw: true
   });
-  if (!user) {
+  if (!result) {
     return;
   }
   else {
-    return bcrypt.compare(password, user.users_password);
+    return bcrypt.compare(value, result.users_password);
   }
 };
 

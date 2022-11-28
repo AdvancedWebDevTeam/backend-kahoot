@@ -1,5 +1,6 @@
 const groupService = require("./groupService");
 const roleService = require("../roles/rolesService");
+const sendEmail = require("../../components/users/sendEmail");
 
 async function getSpecificUserInGroup(req, res) {
   const { groupId, userId } = req.params;
@@ -14,7 +15,7 @@ async function getSpecificUserInGroup(req, res) {
 }
 
 async function getUsersInGroup(req, res) {
-  try{
+  try {
     const { groupId } = req.params;
     const users = await groupService.getAllUsersInGroup(groupId);
     res.status(200).json(users);
@@ -70,11 +71,38 @@ async function getGroupsOfUser(req, res) {
   }
 }
 
+async function InviteUsers(req, res) {
+  const { id } = req.params;
+  const { groupName, emails } = req.body;
+
+  const groups = await groupService.getGroupsOfUser(id);
+
+  const isOwner = groups.find(function(group) {
+    return group.groups_name === groupName;
+  });
+  console.log(isOwner);
+
+  if (!isOwner) { 
+    res.json("Input Group Name is not your Group or not exists.");
+  }
+  else {
+    try {
+      const url = `${process.env.BASE_URL}/invite/${isOwner.groups_id}`;
+      await sendEmail(emails, "Invite email", url);
+      res.json("success");
+    }
+    catch (e) {
+      res.json("Fail");
+    }
+  }
+}
+
 module.exports = {
   createGroup,
   getListOfGroups,
   getGroupDetails,
   getUsersInGroup,
   getSpecificUserInGroup,
-  getGroupsOfUser
+  getGroupsOfUser,
+  InviteUsers
 };
