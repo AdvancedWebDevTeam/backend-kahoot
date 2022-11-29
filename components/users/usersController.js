@@ -8,26 +8,8 @@ exports.getUser = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
   const ID = req.params.id;
-  user = {
-    users_name: "",
-    users_password: "",
-    email: "",
-    create_at: "",
-    expire_at: "",
-    groups_name: [],
-    roles_name: []
-  };
   const result = await usersService.getUserProfile(ID);
-  result.map(function (x){
-    user.users_name = x.users_name;
-    user.users_password = x.users_password;
-    user.email = x.email;
-    user.create_at = x.create_at;
-    user.expire_at = x.expire_at;
-    user.groups_name.push(x.groups_name);
-    user.roles_name.push(x.roles_name);
-  })
-  res.json(user);
+  res.json(result);
 };
 
 exports.updateUserProfile = async (req, res) => {
@@ -74,10 +56,9 @@ exports.getAllUsers = async (_, res) => {
 };
 
 exports.checkPassword = async (req, res) => {
-  const {id} = req.params;
-  const { password } = req.body;
-  const user = await usersService.CheckPassword(id, password);
-  if (!user) {
+  const {id, value} = req.params;
+  const result = await usersService.CheckPassword(id, value);
+  if (!result) {
     res.json("Wrong password");
   } else {
     res.json("Right password");

@@ -11,7 +11,7 @@ router.post("/", usersController.registerUser);
 
 router.get("/:id", usersController.getUserProfile);
 
-router.get("/:id/checkpass", usersController.checkPassword);
+router.get("/:id/:value", usersController.checkPassword);
 
 router.put("/update", usersController.updateUserProfile);
 
