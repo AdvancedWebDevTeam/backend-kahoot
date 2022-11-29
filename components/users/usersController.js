@@ -49,7 +49,7 @@ exports.registerUser = async (req, res) => {
       email,
       password
     );
-    const url = `${process.env.BASE_URL}/${result.user.users_id}/verify/${result.user.tokens}`;
+    const url = `${process.env.BASE_URL}/#/${result.user.users_id}/verify/${result.user.tokens}`;
     await sendEmail(result.user.email, "Verify email", url);
     res.status(201).json("An email has sent to verify your account");
   } else {
