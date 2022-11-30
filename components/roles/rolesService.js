@@ -56,6 +56,14 @@ async function queryUpdateRoleInGroup(groupId, userId, roleId) {
   );
 }
 
+async function InsertUser(groupId, userId, roleId) {
+  return sequelize.query(
+    `INSERT INTO roles_groups_users (users_id, groups_id, roles_id)
+    VALUES ("${userId}", "${groupId}", ${roleId});`
+  );
+}
+
+
 async function updateRoleInGroup(
   groupId,
   userId,
@@ -82,11 +90,17 @@ async function joinGrByLink(groupId, userId) {
 
   if (userRoleInGroup === null) {
     // TODO: remove raw query if possible
-    await queryUpdateRoleInGroup(groupId, userId, 3);
-    userRoleInGroup.roles_id = 3;
-    return userRoleInGroup;
+    await InsertUser(groupId, userId, 3);
+    const result = await getUserRoleInGroup(groupId, userId);
+    return {
+      alreadyJoined: false,
+      result: result
+    };
   }
-  return userRoleInGroup;
+  return {
+    alreadyJoined: true,
+    result: userRoleInGroup
+  };
 }
 
 async function getAllAvailableRoles() {
