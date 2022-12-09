@@ -10,6 +10,7 @@ const usersRouter = require("./components/users/usersRouter");
 const authRouter = require("./components/auth/authRouter");
 const groupRouter = require("./components/group/groupRouter");
 const rolesRouter = require("./components/roles/rolesRouter");
+const presentationRouter = require("./components/presentation/presentRouter");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/groups", groupRouter);
 app.use("/roles", rolesRouter);
+app.use("/presentations", presentationRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
