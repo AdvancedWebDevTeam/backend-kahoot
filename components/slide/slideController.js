@@ -12,10 +12,16 @@ exports.getNameAndCreator = async (req, res) => {
     res.status(200).json(result);
 }
 
+exports.getSlideTypes = async(req, res) => {
+    const result = await slideService.getSlideTypes();
+
+    res.status(200).json(result);
+}
+
 exports.addSlideInPresentation = async (req, res) => {
     const { presentId, typeId, content } = req.body;
     const result = await slideService.addSlideInPresentation(presentId, typeId, content);
-    console.log(result)
+
     if(result){
         res.status(201).send("Add slide Successfully");
     }

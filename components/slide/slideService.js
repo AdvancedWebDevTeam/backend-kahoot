@@ -4,6 +4,12 @@ const { sequelize } = require("../../models/index");
 exports.getAllSlideInPresent = async (presentId) => {
     const result = await models.slides.findAll({
         attributes: ["slides_id", "presents_id", "types_id", "content"],
+        include: [{
+            model: models.slide_types,
+            as: "type",
+            attributes: ["types_name"],
+            required: true,
+        }],
         where: { presents_id: presentId, is_deleted: false },
         raw: true
     })
@@ -27,6 +33,11 @@ exports.getNameAndCreator = async (presentId) => {
     return result;
 }
 
+exports.getSlideTypes = async() => {
+    const result = await models.slide_types.findAll();
+    return result;
+}
+
 exports.addSlideInPresentation = async(presentId, typeId, content) => {
     await sequelize.query("call sp_addidslide()", {}).then((v) => console.log(v));
 
@@ -37,10 +48,7 @@ exports.addSlideInPresentation = async(presentId, typeId, content) => {
     });
 
     const slideID = slide.slides_id;
-    console.log(slideID);
 
-    console.log({presentId, typeId, content})
-    
     const succesfullRows = await models.slides.update (
         {
             presents_id: presentId,
