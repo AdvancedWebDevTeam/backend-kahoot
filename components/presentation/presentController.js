@@ -24,6 +24,6 @@ exports.addPresentation = async(req, res) => {
         res.status(201).send("Add presentation Successfully");
     }
     else{
-        res.status(405).send("Add presentation Successfully")
+        res.status(405).send("Failed to Add presentation")
     }
 }
