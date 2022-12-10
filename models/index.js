@@ -1,7 +1,5 @@
 const Sequelize = require("sequelize");
 const initModels = require("./init-models");
-const dotenv = require('dotenv');
-dotenv.config();
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
