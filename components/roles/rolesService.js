@@ -113,5 +113,6 @@ module.exports = {
   updateRoleInGroup,
   joinGrByLink,
   assignRoleToMultipleUsersInGroup,
-  getAllAvailableRoles
+  getAllAvailableRoles,
+  getUserRoleInGroup
 };
