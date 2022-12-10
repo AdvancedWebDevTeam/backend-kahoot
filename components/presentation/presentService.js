@@ -58,3 +58,26 @@ exports.updatePresentation = async (presentation, field) => {
   await presentation.save();
   return presentation;
 };
+
+exports.deletePresentation = async (presentID) => {
+  await models.slides.destroy({
+    where: {
+      presents_id: presentID
+    }
+  }).then(function(rowDeleted) {
+    console.log(rowDeleted);
+  }, function(error) {
+    console.log(error);
+    return -1;
+  });
+  await models.presentations.destroy({
+    where: {
+      presents_id: presentID
+    }
+  }).then(function(rowDeleted) {
+    return rowDeleted;
+  }, function(error) {
+    console.log(error);
+    return -1;
+  });
+};

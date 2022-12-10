@@ -46,3 +46,13 @@ exports.update = async (req, res) => {
     res.status(200).json(updatedPresentation);
   }
 };
+
+exports.deletePresentation = async (req, res) => {
+  const { presentID } = req.params;
+  const result = await presentService.deletePresentation(presentID);
+  if (result === -1) {
+    res.json("Failed to delete presentation!");
+  } else {
+    res.json("Successfully deleted!");
+  }
+};
