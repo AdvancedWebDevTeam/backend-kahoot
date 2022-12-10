@@ -17,6 +17,30 @@ exports.getAllSlideInPresent = async (presentId) => {
     return result;
 }
 
+
+exports.parseQuestionAndOption = async (slides) => {
+    
+    for(let i = 0; i < slides.length; i++)
+    {
+        let question = "";
+        let options = {};
+
+        if(slides[i].content !== "")
+        {
+            const parseContent = JSON.parse(slides[i].content);
+            question = parseContent["question"];
+            delete parseContent["question"];
+            options = parseContent;
+        }
+
+        slides[i]["question"] = question;
+        slides[i]["options"] = options;
+    }
+
+    const result = slides;
+    return result;
+}
+
 exports.getNameAndCreator = async (presentId) => {
     const result = await models.presentations.findOne({
         attributes: ["presents_name"],
@@ -60,5 +84,24 @@ exports.addSlideInPresentation = async(presentId, typeId, content) => {
             where: { slides_id: slideID },
         }
     )
-    return succesfullRows > 0;
+    return { 
+        success: succesfullRows > 0,
+        slideID: slideID 
+    };
+}
+
+exports.updateSlide = async (slideId, presentId, typeId, content) => {
+    const successfulRow = await models.slides.update (
+        {
+            presents_id: presentId,
+            types_id: typeId,
+            content: content,
+            is_deleted: false
+        },
+        {
+            where: { slides_id: slideId },
+        }
+    )
+
+    return successfulRow > 0;
 }
