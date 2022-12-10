@@ -62,3 +62,16 @@ exports.addSlideInPresentation = async(presentId, typeId, content) => {
     )
     return succesfullRows > 0;
 }
+
+exports.deleteSlide = async(slidesId) => {
+    await models.slides.destroy({
+        where: {
+            slides_id: slidesId
+        }
+    }).then(function(rowDeleted) {
+        return rowDeleted;
+    }, function(error) {
+        console.log(error);
+        return -1;
+    });
+}

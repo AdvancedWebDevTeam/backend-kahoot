@@ -29,3 +29,13 @@ exports.addSlideInPresentation = async (req, res) => {
         res.status(405).send("Failed to Add slide")
     }
 }
+
+exports.deleteSlide = async (req, res) => {
+    const { slidesId } = req.params;
+    const result = await slideService.deleteSlide(slidesId);
+    if (result === -1) {
+        res.json("Failed to Delete slide");
+    } else {
+        res.json("Successfully!");
+    }
+}

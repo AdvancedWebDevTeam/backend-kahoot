@@ -7,5 +7,6 @@ router.get("/show/:presentId", slideController.getAllSlideInPresent);
 router.get("/creator/:presentId", slideController.getNameAndCreator);
 router.post("/add", slideController.addSlideInPresentation);
 router.get("/type", slideController.getSlideTypes);
+router.delete("/delete/:slidesId", slideController.deleteSlide);
 
 module.exports = router;
