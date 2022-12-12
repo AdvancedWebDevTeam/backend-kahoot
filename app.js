@@ -42,6 +42,17 @@ app.use("/roles", rolesRouter);
 app.use("/presentations", presentationRouter);
 app.use("/slides", slideRouter);
 
+//Socket
+io.on("connection", (socket) => {
+  console.log("User connected.");
+  
+
+  socket.on('disconnect', () => {
+    console.log("User disconnected.");
+  });
+});
+
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
