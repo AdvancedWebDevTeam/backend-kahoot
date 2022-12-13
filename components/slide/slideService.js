@@ -41,6 +41,22 @@ exports.parseQuestionAndOption = async (slides) => {
     return result;
 }
 
+exports.parseContent = async (data) => {
+    
+    for(let i = 0; i < data.length; i++)
+    {
+        let temp = {question: data[i].question};
+        let names = Object.getOwnPropertyNames(data[i].options);
+        for (let j = 0; j < names.length; j++) {
+            temp[names[j]] = data[i].options[names[j]];
+        }
+        data[i].content = JSON.stringify(temp);
+    }
+
+    const result = data;
+    return result;
+}
+
 exports.getNameAndCreator = async (presentId) => {
     const result = await models.presentations.findOne({
         attributes: ["presents_name"],
@@ -116,5 +132,25 @@ exports.deleteSlide = async(slidesId) => {
     }, function(error) {
         console.log(error);
         return -1;
+    });
+}
+
+exports.submitSlide = async(data) => {
+    return models.slides.update({
+        content: data.content
+    },
+    {
+        where: {
+            slides_id: data.slides_id
+        }
+    });
+}
+
+exports.findOneSlide = async(slidesId) => {
+    return models.slides.findOne({
+        attributes: ["slides_id", "content"],
+        where: {
+        slides_id: slidesId,},
+        raw: true
     });
 }

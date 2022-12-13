@@ -12,10 +12,17 @@ const groupRouter = require("./components/group/groupRouter");
 const rolesRouter = require("./components/roles/rolesRouter");
 const presentationRouter = require("./components/presentation/presentRouter");
 const slideRouter = require("./components/slide/slideRouter");
+const handlerSocket = require("./components/socket/handleSocket");
 
 const app = express();
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+const {Server} = require('socket.io');
+var io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  }
+});
 
 app.use(cors());
 
@@ -43,15 +50,11 @@ app.use("/presentations", presentationRouter);
 app.use("/slides", slideRouter);
 
 //Socket
-io.on("connection", (socket) => {
-  console.log("User connected.");
-  
+const onConnection = (socket) => {
+  handlerSocket(io, socket);
+}
 
-  socket.on('disconnect', () => {
-    console.log("User disconnected.");
-  });
-});
-
+io.on("connection", onConnection);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
