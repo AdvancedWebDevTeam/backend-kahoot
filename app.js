@@ -13,13 +13,14 @@ const rolesRouter = require("./components/roles/rolesRouter");
 const presentationRouter = require("./components/presentation/presentRouter");
 const slideRouter = require("./components/slide/slideRouter");
 const handlerSocket = require("./components/socket/handleSocket");
+require("dotenv").config();
 
 const app = express();
 var server = require('http').Server(app);
 const {Server} = require('socket.io');
 var io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.BASE_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   }
 });
