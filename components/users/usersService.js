@@ -165,7 +165,8 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
     email = '${email}', 
     create_at = '${createAt}',
     expire_at = '${expireAt}',
-    tokens = '${token}' where users_id = '${userID}'`;
+    tokens = '${token}', 
+    is_verified = true where users_id = '${userID}'`;
 
   await sequelize.query(query_update, {}).then((v) => console.log(v));
 
