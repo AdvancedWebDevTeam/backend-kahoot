@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { models } = require("../../models");
 const { sequelize } = require("../../models/index");
 
@@ -17,6 +18,48 @@ exports.getPresentation = async (groupId) => {
     where: { groups_id: groupId, is_deleted: false },
     raw: true
   });
+
+  return result;
+};
+
+exports.getMyPresentation = async (userId) => {
+  const userPresent = await models.presentations.findAll({
+    attributes: ["presents_id", "presents_name"],
+    include: [
+      {
+        model: models.users,
+        as: "user",
+        attributes: ["users_name"],
+        required: true
+      }
+    ],
+    where: { creators_id: userId, is_deleted: false },
+    raw: true
+  });
+  const userCollaboratorPresent = await models.collaborators.findAll({
+    include: [
+      {
+        model: models.users,
+        as: "user",
+        attributes: ["users_name"],
+        required: true,
+      },
+      {
+        model: models.presentations,
+        as: "present",
+        attributes: [],
+        where: { is_deleted: false},
+        required: true
+      }
+    ],
+    attributes: ["presents_id", [sequelize.literal("`present`.`presents_name`"), "presents_name"]],
+
+    where: { users_id: userId },
+    raw: true
+  });
+
+  console.log("---------------------Chay vao lan thu nnnn---------------------jdsdsd")
+  const result = userPresent.push(userCollaboratorPresent);
 
   return result;
 };
