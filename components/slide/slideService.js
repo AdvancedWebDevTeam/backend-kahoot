@@ -59,7 +59,7 @@ exports.parseContent = async (data) => {
 
 exports.getNameAndCreator = async (presentId) => {
     const result = await models.presentations.findOne({
-        attributes: ["presents_name"],
+        attributes: ["presents_name", "groups_id"],
         include: [{
             model: models.users,
             as: "user",
