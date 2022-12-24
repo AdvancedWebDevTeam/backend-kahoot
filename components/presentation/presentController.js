@@ -17,6 +17,14 @@ exports.getPresentation = async (req, res) => {
   res.status(200).json(presentations);
 };
 
+exports.getMyPresentation = async (req, res) => {
+  const { userId } = req.params;
+
+  const presentations = await presentService.getMyPresentation(userId);
+  
+  res.status(200).json(presentations);
+};
+
 exports.addPresentation = async (req, res) => {
   const { groupId, userId, presentName } = req.body;
   const result = await presentService.addPresentation(
