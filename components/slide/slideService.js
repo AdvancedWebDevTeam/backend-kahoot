@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { models } = require("../../models");
 const { sequelize } = require("../../models/index");
 
@@ -59,13 +60,25 @@ exports.parseContent = async (data) => {
 
 exports.getNameAndCreator = async (presentId) => {
     const result = await models.presentations.findOne({
-        attributes: ["presents_name"],
-        include: [{
-            model: models.users,
-            as: "user",
-            attributes: ["users_name"],
-            required: true,
-        }],
+        include: [
+            {
+                model: models.users,
+                as: "user",
+                attributes: [],
+                required: true,
+            },
+            {
+                model: models.kahoot_groups,
+                as: "group",
+                attributes: [],
+                required: false,
+            }
+        ],
+        attributes: ["presents_name", 
+                    "groups_id",
+                    [sequelize.literal("`group`.`groups_name`"), "groups_name"],
+                    [sequelize.literal("`user`.`users_name`"), "users_name"],
+                ],
         where: { presents_id: presentId, is_deleted: false },
         raw: true
     })

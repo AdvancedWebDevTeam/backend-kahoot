@@ -1,3 +1,5 @@
+const { raw } = require("express");
+const { where } = require("sequelize");
 const { models } = require("../../models");
 const { sequelize } = require("../../models/index");
 
@@ -19,6 +21,51 @@ exports.getPresentation = async (groupId) => {
   });
 
   return result;
+};
+
+exports.getMyPresentation = async (userId) => {
+  const userPresent = await models.presentations.findAll({
+    attributes: ["presents_id", "presents_name", "groups_id"],
+    include: [
+      {
+        model: models.users,
+        as: "user",
+        attributes: ["users_name"],
+        required: true
+      }
+    ],
+    where: { creators_id: userId, is_deleted: false },
+    raw: true
+  });
+  const userCollaboratorPresent = await models.collaborators.findAll({
+    include: [
+      {
+        model: models.users,
+        as: "user",
+        attributes: ["users_name"],
+        required: true,
+      },
+      {
+        model: models.presentations,
+        as: "present",
+        attributes: [],
+        where: { is_deleted: false},
+        required: true
+      }
+    ],
+    attributes: [
+      "presents_id", 
+      [sequelize.literal("`present`.`presents_name`"), "presents_name"],
+      [sequelize.literal("`present`.`groups_id`"), "groups_id"],
+  ],
+
+    where: { users_id: userId },
+    raw: true
+  });
+  for(let i = 0; i < userCollaboratorPresent.length; i++){
+    userPresent.push(userCollaboratorPresent[i]);
+  }
+  return userPresent;
 };
 
 exports.addPresentation = async (groupId, userId, presentName) => {
