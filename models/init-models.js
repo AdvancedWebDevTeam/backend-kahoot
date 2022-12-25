@@ -6,6 +6,7 @@ const _users = require("./users");
 const _presentations = require("./presentations");
 const _slide_types = require("./slide_types");
 const _slides = require("./slides");
+const _slide_present = require("./slide-present");
 
 function initModels(sequelize) {
   const kahoot_groups = _kahoot_groups(sequelize, DataTypes);
@@ -15,6 +16,8 @@ function initModels(sequelize) {
   const presentations = _presentations(sequelize, DataTypes);
   const slide_types = _slide_types(sequelize, DataTypes);
   const slides = _slides(sequelize, DataTypes);
+  const slide_present = _slide_present(sequelize, DataTypes);
+
 
   presentations.belongsTo(kahoot_groups, { as: "group", foreignKey: "groups_id"});
   kahoot_groups.hasMany(presentations, { as: "presentations", foreignKey: "groups_id"})
@@ -48,6 +51,8 @@ function initModels(sequelize) {
     foreignKey: "users_id"
   });
 
+  slide_present.belongsTo(presentations, {as: "presentations", foreignKey: "presents_id"})
+
   return {
     kahoot_groups,
     presentations,
@@ -55,7 +60,8 @@ function initModels(sequelize) {
     roles_groups_users,
     slide_types,
     slides,
-    users
+    users,
+    slide_present
   };
 }
 module.exports = initModels;

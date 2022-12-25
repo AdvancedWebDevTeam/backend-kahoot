@@ -56,3 +56,13 @@ exports.deletePresentation = async (req, res) => {
     res.json("Successfully deleted!");
   }
 };
+
+exports.getSlidePresent = async (req, res) => {
+  const { presentID } = req.params;
+  const result = await presentService.getSlidePresent(presentID);
+  if (!result) {
+    res.json("Failed to GET slide_present!");
+  } else {
+    res.json("Successfully!");
+  }
+};

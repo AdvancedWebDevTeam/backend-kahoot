@@ -62,11 +62,7 @@ exports.submitSlide = async (req, res) => {
     } else {
         let data = await slideService.parseQuestionAndOption(arraySlide);
         if (question === data[0].question) {
-            data[0].options[choice] = (parseInt(data[0].options[choice]) + 1).toString();
-            let submitResult = await slideService.parseContent(data);
-            await slideService.submitSlide(submitResult[0]);
-            const listSlide = await slideService.getAllSlideInPresent(presentId);
-            const result = await slideService.parseQuestionAndOption(listSlide);
+            const result = await slideService.handleSubmitSlide(data);
             res.io.emit("submitSlide", result);
             res.json("Submit success.");
         } else {

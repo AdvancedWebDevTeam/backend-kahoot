@@ -146,6 +146,14 @@ exports.submitSlide = async(data) => {
     });
 }
 
+exports.handleSubmitSlide = async(data) => {
+    data[0].options[choice] = (parseInt(data[0].options[choice]) + 1).toString();
+    let submitResult = await slideService.parseContent(data);
+    await slideService.submitSlide(submitResult[0]);
+    const listSlide = await slideService.getAllSlideInPresent(presentId);
+    return result = await slideService.parseQuestionAndOption(listSlide);
+}
+
 exports.findOneSlide = async(slidesId) => {
     return models.slides.findOne({
         attributes: ["slides_id", "content"],

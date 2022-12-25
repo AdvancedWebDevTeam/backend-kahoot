@@ -70,6 +70,16 @@ exports.deletePresentation = async (presentID) => {
     console.log(error);
     return -1;
   });
+  await models.slide_present.destroy({
+    where: {
+      presents_id: presentID
+    }
+  }).then(function(rowDeleted) {
+    console.log(rowDeleted);
+  }, function(error) {
+    console.log(error);
+    return -1;
+  });
   await models.presentations.destroy({
     where: {
       presents_id: presentID
@@ -79,5 +89,46 @@ exports.deletePresentation = async (presentID) => {
   }, function(error) {
     console.log(error);
     return -1;
+  });
+};
+
+exports.addSlidePresent = async (presents_id, index_slide) => {
+  const element = await models.slide_present.findOne({
+    where: {
+      presents_id
+    }
+  });
+  if (!element) {
+    await models.slide_present.create({
+      presents_id,
+      index_slide
+    }).then(function(){
+      return 1;
+    }).catch(err => {
+      console.log(err);
+      return -1;
+    });
+  } else {
+    await models.slide_present.update({
+      index_slide
+    },
+    {
+      where: {
+        presents_id
+      }
+    }).then(function(){
+      return 1;
+    }).catch(err => {
+      console.log(err);
+      return -1;
+    });
+  }
+};
+
+exports.getSlidePresent = async (presents_id) => {
+  return await models.slide_present.findOne({
+    where: {
+      presents_id
+    }
   });
 };
