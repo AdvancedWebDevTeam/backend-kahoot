@@ -175,3 +175,17 @@ exports.findOneSlide = async(slidesId) => {
         raw: true
     });
 }
+
+exports.getSlidePresent = async(presents_id) => {
+    const index = await models.slide_present.findOne({
+        where: {
+            presents_id
+        }
+    });
+    const slides = await this.getAllSlideInPresent(presents_id);
+    const parse = await this.parseQuestionAndOption(slides);
+    return {
+        indexSlide: index,
+        listOfSlides: parse
+    };
+}

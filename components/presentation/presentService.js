@@ -171,11 +171,3 @@ exports.addSlidePresent = async (presents_id, index_slide) => {
     });
   }
 };
-
-exports.getSlidePresent = async (presents_id) => {
-  return await models.slide_present.findOne({
-    where: {
-      presents_id
-    }
-  });
-};

@@ -70,3 +70,9 @@ exports.submitSlide = async (req, res) => {
         }
     }
 }
+
+exports.getSlidePresent = async (req, res) => {
+    const {presentID} = req.params;
+    const result = await slideService.getSlidePresent(presentID);
+    res.json(result);
+};
