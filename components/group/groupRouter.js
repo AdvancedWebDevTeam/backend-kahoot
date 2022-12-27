@@ -12,6 +12,7 @@ router.get("/:id", groupController.getGroupDetails);
 
 router.get("/:groupId/users", groupController.getUsersInGroup);
 router.get("/:groupId/users/:userId", groupController.getSpecificUserInGroup);
+router.get("/:groupId/kick/:userId", groupController.kickUserFromGroup);
 
 router.get("/user/:userId", groupController.getGroupsOfUser);
 

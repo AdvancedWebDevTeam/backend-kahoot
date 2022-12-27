@@ -95,6 +95,22 @@ async function InviteUsers(req, res) {
   }
 }
 
+async function kickUserFromGroup(req, res) {
+  const { groupId, userId } = req.params;
+  try {
+    const isInGroup = await groupService.isUserInGroup(groupId, userId);
+    if (!isInGroup) {
+      res.status(400).json({ message: "User is not in group" });
+    }
+
+    await roleService.kickUserFromGroup(groupId, userId);
+    res.status(200).json({ message: "User kicked from group" });
+  } catch (e) {
+    const status = e.cause === "server" ? 500 : 400;
+    res.status(status).json({ message: e.message });
+  }
+}
+
 module.exports = {
   createGroup,
   getListOfGroups,
@@ -102,5 +118,6 @@ module.exports = {
   getUsersInGroup,
   getSpecificUserInGroup,
   getGroupsOfUser,
-  InviteUsers
+  InviteUsers,
+  kickUserFromGroup
 };
