@@ -100,6 +100,29 @@ exports.findOne = async (field) => {
   });
 };
 
+exports.addChatPresent = async (data) => {
+  await sequelize
+    .query("call sp_addidmessagechatbox()", {})
+    .then((v) => console.log(v));
+  const chatbox = await models.messagechatbox.findOne({
+    where: { presents_id: null},
+    raw: true
+  });
+  const boxId = chatbox.messagechatbox_id;
+  const row = await models.messagechatbox.update({
+    presents_id: data.presents_id,
+    users_id: data.users_id,
+    content: data.content
+  },
+  {
+    where: {
+      messagechatbox_id: boxId
+    }
+  });
+
+  return row > 0;
+}
+
 exports.updatePresentation = async (presentation, field) => {
   presentation.set(field);
   await presentation.save();
@@ -170,4 +193,23 @@ exports.addSlidePresent = async (presents_id, index_slide) => {
       return -1;
     });
   }
+};
+
+exports.findOneChat = async(data) => {
+  const chat =  await models.messagechatbox.findAll({
+    where: {presents_id: data},
+    raw: true
+  });
+  const result = [];
+  for (let i = 0; i < chat.length; i++) {
+    result.push({
+      author: chat[i].users_id,
+      chat: chat[i].content
+    });
+  }
+  return result;
+};
+
+exports.addMessageToChat = async(data) => {
+  return this.addChatPresent(data);
 };

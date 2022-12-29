@@ -24,13 +24,22 @@ module.exports = (io, socket) => {
   const JoinRoom = (userId) => {
     socket.join(userId);
   }
+  const JoinPresent = (presentID) => {
+    socket.join(presentID);
+  }
   const disconnect = () => {
       console.log("User disconnected.");
+  }
+  const SendMessage = (message) => {
+    presentService.addMessageToChat(message);
+    socket.emit("receive_message", message);
   }
   console.log("-----------------------------User connected.--------------------------");
 
   socket.on("clickedSlide", clickedSlide);
   socket.on("NotifyPresentation", Notify)
-  socket.on("Join", JoinRoom)
+  socket.on("Join", JoinRoom);
+  socket.on("JoinPresent", JoinPresent);
+  socket.on("send_message", SendMessage);
   socket.on('disconnect', disconnect);
 }
