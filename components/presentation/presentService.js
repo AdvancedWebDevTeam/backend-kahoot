@@ -150,6 +150,34 @@ exports.deletePresentation = async (presentID) => {
     console.log(error);
     return -1;
   });
+  await models.messagechatbox.update({
+    presents_id: null
+  },
+  {
+    where: {
+      presents_id: presentID
+    }
+  });
+  await models.questions.destroy({
+    where: {
+      presents_id: presentID
+    }
+  }).then(function(rowDeleted) {
+    console.log(rowDeleted);
+  }, function(error) {
+    console.log(error);
+    return -1;
+  });
+  await models.collaborators.destroy({
+    where: {
+      presents_id: presentID
+    }
+  }).then(function(rowDeleted) {
+    console.log(rowDeleted);
+  }, function(error) {
+    console.log(error);
+    return -1;
+  });
   await models.presentations.destroy({
     where: {
       presents_id: presentID
