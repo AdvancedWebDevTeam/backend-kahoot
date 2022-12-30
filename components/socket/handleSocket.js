@@ -2,8 +2,8 @@ const groupService = require("../group/groupService");
 const presentService = require('../presentation/presentService');
 
 module.exports = (io, socket) => {
-  const clickedSlide = (data) => {
-    presentService.addSlidePresent(data.presents_id, data.indexSlide);
+  const clickedSlide = async (data) => {
+    await presentService.addSlidePresent(data.presents_id, data.indexSlide);
     io.emit("clickedSlide", data);
   };
   const Notify = async ({presentInfo, currentUserId}) => {
@@ -24,22 +24,31 @@ module.exports = (io, socket) => {
   const JoinRoom = (userId) => {
     socket.join(userId);
   }
-  const JoinGroup = (groupID) => {
-    socket.join(groupID);
-  }
   const disconnect = () => {
       console.log("User disconnected.");
   }
-  const SendMessage = (message) => {
-    presentService.addMessageToChat(message);
-    io.emit("receive_message", message);
+  const SendMessage = async ({ presentInfo, data, userID }) => {
+    await presentService.addChatPresent(data);
+    io.emit("receive_message", data);
+    if(presentInfo.groups_id !== null){
+      const userInGroup = await groupService.getAllUsersInGroup(presentInfo.groups_id);
+      const list = [];
+      for(let i = 0; i < userInGroup.length; i++){
+        list.push(userInGroup[i].userId);
+      }
+      for(let j = 0; j < list.length; j++){
+        if(list[j] !== userID){
+          io.to(list[j]).emit("NotifyMessage", 
+          `You have a message in ${presentInfo.presents_name} of group ${presentInfo.groups_name}!`);
+        }
+      }
+    }
   }
   console.log("-----------------------------User connected.--------------------------");
 
   socket.on("clickedSlide", clickedSlide);
   socket.on("NotifyPresentation", Notify)
   socket.on("Join", JoinRoom);
-  socket.on("JoinGroup", JoinGroup);
   socket.on("send_message", SendMessage);
   socket.on('disconnect', disconnect);
 }

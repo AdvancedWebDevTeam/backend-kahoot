@@ -230,14 +230,15 @@ exports.findOneChat = async(data) => {
   });
   const result = [];
   for (let i = 0; i < chat.length; i++) {
+    const user = await models.users.findOne({
+      where: {users_id: chat[i].users_id},
+      raw: true
+    });
     result.push({
       author: chat[i].users_id,
+      name: user.users_name,
       chat: chat[i].content
     });
   }
   return result;
-};
-
-exports.addMessageToChat = async(data) => {
-  return this.addChatPresent(data);
 };
