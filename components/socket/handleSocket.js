@@ -38,8 +38,11 @@ module.exports = (io, socket) => {
       }
       for(let j = 0; j < list.length; j++){
         if(list[j] !== userID){
-          io.to(list[j]).emit("NotifyMessage", 
-          `You have a message in ${presentInfo.presents_name} of group ${presentInfo.groups_name}!`);
+          const result = {
+            presents_id: data.presents_id,
+            message: `You have a message in ${presentInfo.presents_name} of group ${presentInfo.groups_name}!`
+          }
+          io.to(list[j]).emit("NotifyMessage", result);
         }
       }
     }
