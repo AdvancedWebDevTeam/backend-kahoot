@@ -42,7 +42,7 @@ exports.getMyPresentation = async (userId) => {
       {
         model: models.users,
         as: "user",
-        attributes: ["users_name"],
+        attributes: ["users_name", "users_id"],
         required: true
       }
     ],
@@ -145,4 +145,54 @@ exports.deletePresentation = async (presentID) => {
         return -1;
       }
     );
+};
+
+async function deleteAllCollaboratorsOfPresentation(id) {
+  const t = await sequelize.transaction();
+  try {
+    await models.collaborators.destroy({
+      where: { presents_id: id },
+      transaction: t
+    });
+    await t.commit();
+  } catch (error) {
+    await t.rollback();
+    throw new Error("Error while deleting collaborators");
+  }
+}
+
+async function addCollaboratorsToPresentation(id, collaborators) {
+  const t = await sequelize.transaction();
+  try {
+    for (let i = 0; i < collaborators.length; i++) {
+      await models.collaborators.create(
+        {
+          presents_id: id,
+          users_id: collaborators[i].userId
+        },
+        { transaction: t }
+      );
+    }
+    await t.commit();
+  } catch (error) {
+    await t.rollback();
+    throw new Error("Error while adding collaborators");
+  }
+}
+
+// TODO: check this function
+exports.updateCollaborators = async (id, collaborators) => {
+  const presentation = await models.presentations.findOne({
+    where: { presents_id: id }
+  });
+  if (!presentation) {
+    throw new Error("Presentation not found");
+  }
+
+  try {
+    await deleteAllCollaboratorsOfPresentation(id);
+    await addCollaboratorsToPresentation(id, collaborators);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };

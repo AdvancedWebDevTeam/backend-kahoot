@@ -64,3 +64,15 @@ exports.deletePresentation = async (req, res) => {
     res.json("Successfully deleted!");
   }
 };
+
+exports.updateCollaborators = async (req, res) => {
+  const { id } = req.params;
+  const { collaborators } = req.body;
+
+  try {
+    const result = await presentService.updateCollaborators(id, collaborators);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to update collaborators" });
+  }
+};
