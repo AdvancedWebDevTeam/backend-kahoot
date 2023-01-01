@@ -87,10 +87,6 @@ exports.parseQuestionAndOption = async (slides) => {
             default:
                 break;
         }
-        // if(slides[i].content !== "")
-        // {
-
-        // }
     }
 
     const result = slides;
