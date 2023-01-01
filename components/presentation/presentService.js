@@ -1,7 +1,8 @@
-const { raw } = require("express");
-const { where } = require("sequelize");
 const { models } = require("../../models");
 const { sequelize } = require("../../models/index");
+const {
+  findCollaboratorsOfPresentation
+} = require("../collaborator/collaboratorService");
 
 const { presentations } = models;
 
@@ -23,8 +24,19 @@ exports.getPresentation = async (groupId) => {
   return result;
 };
 
+async function addListOfCollaborators(presentList) {
+  const result = [...presentList];
+  for (let i = 0; i < presentList.length; i++) {
+    const collaboratorList = await findCollaboratorsOfPresentation(
+      presentList[i].presents_id
+    );
+    result[i].collaborators = collaboratorList;
+  }
+  return result;
+}
+
 exports.getMyPresentation = async (userId) => {
-  const userPresent = await models.presentations.findAll({
+  let userPresent = await models.presentations.findAll({
     attributes: ["presents_id", "presents_name", "groups_id"],
     include: [
       {
@@ -37,34 +49,30 @@ exports.getMyPresentation = async (userId) => {
     where: { creators_id: userId, is_deleted: false },
     raw: true
   });
-  const userCollaboratorPresent = await models.collaborators.findAll({
+
+  const userCollaboratorPresent = await models.presentations.findAll({
     include: [
       {
         model: models.users,
         as: "user",
-        attributes: ["users_name"],
-        required: true,
+        attributes: ["users_name", "users_id"]
       },
       {
-        model: models.presentations,
-        as: "present",
-        attributes: [],
-        where: { is_deleted: false},
-        required: true
+        model: models.collaborators,
+        as: "collaborators",
+        where: { users_id: userId }
       }
     ],
-    attributes: [
-      "presents_id", 
-      [sequelize.literal("`present`.`presents_name`"), "presents_name"],
-      [sequelize.literal("`present`.`groups_id`"), "groups_id"],
-  ],
+    attributes: ["presents_id", "presents_name"],
 
-    where: { users_id: userId },
+    where: { is_deleted: false },
     raw: true
   });
-  for(let i = 0; i < userCollaboratorPresent.length; i++){
+
+  for (let i = 0; i < userCollaboratorPresent.length; i++) {
     userPresent.push(userCollaboratorPresent[i]);
   }
+  userPresent = await addListOfCollaborators(userPresent);
   return userPresent;
 };
 
@@ -107,24 +115,34 @@ exports.updatePresentation = async (presentation, field) => {
 };
 
 exports.deletePresentation = async (presentID) => {
-  await models.slides.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    console.log(rowDeleted);
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
-  await models.presentations.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    return rowDeleted;
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
+  await models.slides
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        console.log(rowDeleted);
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
+  await models.presentations
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        return rowDeleted;
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
 };

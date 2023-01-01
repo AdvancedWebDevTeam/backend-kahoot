@@ -21,7 +21,7 @@ exports.getMyPresentation = async (req, res) => {
   const { userId } = req.params;
 
   const presentations = await presentService.getMyPresentation(userId);
-  
+
   res.status(200).json(presentations);
 };
 
