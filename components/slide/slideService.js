@@ -25,17 +25,72 @@ exports.parseQuestionAndOption = async (slides) => {
     {
         let question = "";
         let options = {};
+        let heading = "";
+        let subheading = "";
+        let paragraph = "";
 
-        if(slides[i].content !== "")
+        switch(slides[i].types_id)
         {
-            const parseContent = JSON.parse(slides[i].content);
-            question = parseContent["question"];
-            delete parseContent["question"];
-            options = parseContent;
-        }
+            case 0:
+            {
+                slides[i]["question"] = question;
+                slides[i]["options"] = options;
+                slides[i]["subheading"] = subheading;
+                slides[i]["heading"] = heading;
+                slides[i]["paragraph"] = paragraph;
 
-        slides[i]["question"] = question;
-        slides[i]["options"] = options;
+                break;
+            }
+            case 1:
+            {
+                const parseContent = JSON.parse(slides[i].content);
+                question = parseContent["question"];
+                delete parseContent["question"];
+                options = parseContent;
+                
+                slides[i]["question"] = question;
+                slides[i]["options"] = options;
+                slides[i]["subheading"] = subheading;
+                slides[i]["heading"] = heading;
+                slides[i]["paragraph"] = paragraph;
+
+                break;
+            }
+            case 2:
+            {
+                const parseContent = JSON.parse(slides[i].content);
+                heading = parseContent["heading"];
+                subheading = parseContent["subheading"];
+
+                slides[i]["question"] = question;
+                slides[i]["options"] = options;
+                slides[i]["subheading"] = subheading;
+                slides[i]["heading"] = heading;
+                slides[i]["paragraph"] = paragraph;
+
+                break;
+            }
+            case 3:
+            {
+                const parseContent = JSON.parse(slides[i].content);
+                heading = parseContent["heading"];
+                paragraph = parseContent["paragraph"];
+
+                slides[i]["question"] = question;
+                slides[i]["options"] = options;
+                slides[i]["subheading"] = subheading;
+                slides[i]["heading"] = heading;
+                slides[i]["paragraph"] = paragraph;
+
+                break;
+            }
+            default:
+                break;
+        }
+        // if(slides[i].content !== "")
+        // {
+
+        // }
     }
 
     const result = slides;
