@@ -1,5 +1,15 @@
 const { models } = require("../../models");
 
+async function isUserInGroup(groupId, userId) {
+  const user = await models.roles_groups_users.findOne({
+    where: {
+      groups_id: groupId,
+      users_id: userId
+    }
+  });
+  return user !== null;
+}
+
 async function getNewGroupId() {
   const numOfGroups = await models.kahoot_groups.count();
   const paddedId = (numOfGroups + 1).toString().padStart(3, "0");
@@ -82,5 +92,6 @@ module.exports = {
   getGroupById,
   getAllUsersInGroup,
   existsGroupOfId,
-  getGroupsOfUser
+  getGroupsOfUser,
+  isUserInGroup
 };

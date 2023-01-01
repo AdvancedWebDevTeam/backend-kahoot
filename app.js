@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 
+
 const indexRouter = require("./components/home/index");
 const usersRouter = require("./components/users/usersRouter");
 const authRouter = require("./components/auth/authRouter");
@@ -16,12 +17,13 @@ const handlerSocket = require("./components/socket/handleSocket");
 require("dotenv").config();
 
 const app = express();
-var server = require('http').Server(app);
-const {Server} = require('socket.io');
-var io = new Server(server, {
+const server = require("http").Server(app);
+const { Server } = require("socket.io");
+
+const io = new Server(server, {
   cors: {
     origin: process.env.BASE_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
   }
 });
 
@@ -31,7 +33,7 @@ app.use(cors());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
-app.use(function(req, res, next){
+app.use(function (req, res, next) {
   res.io = io;
   next();
 });
@@ -50,10 +52,10 @@ app.use("/roles", rolesRouter);
 app.use("/presentations", presentationRouter);
 app.use("/slides", slideRouter);
 
-//Socket
+// Socket
 const onConnection = (socket) => {
   handlerSocket(io, socket);
-}
+};
 
 io.on("connection", onConnection);
 
@@ -73,4 +75,4 @@ app.use((err, req, res) => {
   res.render("error");
 });
 
-module.exports = {app: app, server: server};
+module.exports = { app, server };
