@@ -21,7 +21,7 @@ exports.getMyPresentation = async (req, res) => {
   const { userId } = req.params;
 
   const presentations = await presentService.getMyPresentation(userId);
-  
+
   res.status(200).json(presentations);
 };
 
@@ -62,5 +62,17 @@ exports.deletePresentation = async (req, res) => {
     res.json("Failed to delete presentation!");
   } else {
     res.json("Successfully deleted!");
+  }
+};
+
+exports.updateCollaborators = async (req, res) => {
+  const { id } = req.params;
+  const { collaborators } = req.body;
+
+  try {
+    const result = await presentService.updateCollaborators(id, collaborators);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to update collaborators" });
   }
 };
