@@ -23,8 +23,8 @@ exports.registerUser = async (req, res) => {
   const { email } = req.body;
   const { password } = req.body;
 
-  const check = await usersService.checkUsers(email);
-  console.log(check);
+  const check = await usersService.checkUsersNotVerified(email);
+  //console.log(check);
   if (check === null) {
     const result = await usersService.registerUsers(
       users_name,
@@ -35,7 +35,12 @@ exports.registerUser = async (req, res) => {
     await sendEmail(result.user.email, "Verify email", url);
     res.status(201).json("An email has sent to verify your account");
   } else {
-    res.status(401).json("Already have account");
+    if(check.is_verified) {
+      res.status(401).json("Already have account");
+    }
+    else {
+      res.status(401).json("Please visit email to verify");
+    }
   }
 };
 
@@ -64,3 +69,25 @@ exports.checkPassword = async (req, res) => {
     res.json("Right password");
   }
 };
+
+exports.updatePassword = async (req, res) => {
+  const { confirmPassword, userId } = req.body;
+  const result = await usersService.updatePassword(confirmPassword, userId);
+  if(result) {
+    res.status(200).send("Reset password succesfully");
+  } else {
+    res.status(405).send("Fail to reset password")
+  }
+}
+
+exports.createResetPasswordToken = async(req, res) => {
+  const { email } = req.body;
+  const resetPaswordToken = await usersService.createResetPasswordToken(email);
+  if(resetPaswordToken !== "") {
+    const url = `${process.env.BASE_URL}/resetpassword/${resetPaswordToken}`;
+    //await sendEmail(email, "Reset password email", url);
+    res.status(200).json(url);
+  } else {
+    res.status(405).send("Fail to create reset password token");
+  }
+}

@@ -17,6 +17,7 @@ router.put("/update", usersController.updateUserProfile);
 
 router.get("/:id/verify/:token", usersController.updateVerify);
 
-
+router.post("/enteremail", usersController.createResetPasswordToken);
+router.patch("/resetpassword", usersController.updatePassword);
 
 module.exports = router;
