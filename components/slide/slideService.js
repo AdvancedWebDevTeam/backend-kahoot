@@ -159,12 +159,12 @@ exports.submitSlide = async(data) => {
     });
 }
 
-exports.handleSubmitSlide = async(data) => {
+exports.handleSubmitSlide = async(data, choice, presentId) => {
     data[0].options[choice] = (parseInt(data[0].options[choice]) + 1).toString();
-    let submitResult = await slideService.parseContent(data);
-    await slideService.submitSlide(submitResult[0]);
-    const listSlide = await slideService.getAllSlideInPresent(presentId);
-    return result = await slideService.parseQuestionAndOption(listSlide);
+    let submitResult = await this.parseContent(data);
+    await this.submitSlide(submitResult[0]);
+    const listSlide = await this.getAllSlideInPresent(presentId);
+    return result = await this.parseQuestionAndOption(listSlide);
 }
 
 exports.findOneSlide = async(slidesId) => {
