@@ -180,7 +180,6 @@ async function addCollaboratorsToPresentation(id, collaborators) {
   }
 }
 
-// TODO: check this function
 exports.updateCollaborators = async (id, collaborators) => {
   const presentation = await models.presentations.findOne({
     where: { presents_id: id }
