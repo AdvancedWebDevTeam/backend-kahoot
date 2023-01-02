@@ -63,7 +63,6 @@ async function InsertUser(groupId, userId, roleId) {
   );
 }
 
-
 async function updateRoleInGroup(
   groupId,
   userId,
@@ -94,7 +93,7 @@ async function joinGrByLink(groupId, userId) {
     const result = await getUserRoleInGroup(groupId, userId);
     return {
       alreadyJoined: false,
-      result: result
+      result
     };
   }
   return {
@@ -107,6 +106,19 @@ async function getAllAvailableRoles() {
   return models.roles.findAll();
 }
 
+async function kickUserFromGroup(groupId, userId) {
+  try {
+    return models.roles_groups_users.destroy({
+      where: {
+        groups_id: groupId,
+        users_id: userId
+      }
+    });
+  } catch (e) {
+    throw new Error("Failed to kick user from group", { cause: "server" });
+  }
+}
+
 module.exports = {
   assignNewRoleInGroup,
   existsRoleOfId,
@@ -114,5 +126,6 @@ module.exports = {
   joinGrByLink,
   assignRoleToMultipleUsersInGroup,
   getAllAvailableRoles,
-  getUserRoleInGroup
+  getUserRoleInGroup,
+  kickUserFromGroup
 };
