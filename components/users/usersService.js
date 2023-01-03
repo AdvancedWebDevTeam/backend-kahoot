@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const randomstring = require("randomstring");
 const { models } = require("../../models");
 const { sequelize } = require("../../models/index");
+const JWT = require("jsonwebtoken");
 
 exports.getUsers = async () => {
   const result = await models.users.findAll({
@@ -14,12 +15,22 @@ exports.getUsers = async () => {
 exports.checkUsers = async (email) => {
   const result = await models.users.findOne({
     attributes: ["users_id", "users_name", "email", "users_password"],
-    where: { email: email },
+    where: { email: email, is_verified: true },
     raw: true
   });
 
   return result;
 };
+
+exports.checkUsersNotVerified = async (email) => {
+  const result = await models.users.findOne({
+    attributes: ["users_id", "users_name", "email", "users_password", "is_verified"],
+    where: { email: email },
+    raw: true
+  });
+
+  return result;
+}
 
 exports.getUserByID = async (ID) => {
   const result = await models.users.findOne({
@@ -180,8 +191,50 @@ exports.resgisterUsersByGoogleAccount = async (users_name, email) => {
 };
 
 exports.getAllUsers = async () => {
-  return models.users.findAll({
+  return await models.users.findAll({
     attributes: ["users_id", "users_name", "email"],
     raw: true
   });
 };
+
+exports.updatePassword = async (newpassword, userId) => {
+  const hashPass = await bcrypt.hash(newpassword, 10);
+
+  const [row] = await models.users.update(
+    {
+      users_password: hashPass
+    },
+    {
+      where: { users_id: userId }
+    }
+  )
+
+  return row === 1;
+}
+
+exports.createResetPasswordToken = async (email) => {
+
+  const user = await this.checkUsers(email)
+  if(user !== null){
+    const resetPasswordToken = JWT.sign(
+      {
+        id: user.users_id,
+        exp: Math.floor(Date.now() / 1000) + 15 * 60
+      },
+      process.env.SECRET_KEY
+    );
+    return resetPasswordToken;
+  }
+  return "";
+}
+
+exports.createRegisterToken = async (userId) => {
+  const registerToken = JWT.sign (
+    {
+      id: userId,
+      exp: Math.floor(Date.now() / 1000) + 15 * 60
+    },
+    process.env.SECRET_KEY   
+  );
+  return registerToken;
+}
