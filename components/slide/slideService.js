@@ -93,7 +93,7 @@ exports.parseQuestionAndOption = async (slides) => {
     return result;
 }
 
-exports.parseContent = async (data) => {
+async function parseContent(data) {
     
     for(let i = 0; i < data.length; i++)
     {
@@ -198,8 +198,7 @@ exports.deleteSlide = async(slidesId) => {
         return -1;
     });
 }
-
-exports.submitSlide = async(data) => {
+async function submitSlide(data) {
     return models.slides.update({
         content: data.content
     },
@@ -210,6 +209,14 @@ exports.submitSlide = async(data) => {
     });
 }
 
+exports.handleSubmitSlide = async(data, choice, presentId) => {
+    data[0].options[choice] = (parseInt(data[0].options[choice]) + 1).toString();
+    let submitResult = await parseContent(data);
+    await submitSlide(submitResult[0]);
+    const listSlide = await this.getAllSlideInPresent(presentId);
+    return result = await this.parseQuestionAndOption(listSlide);
+}
+
 exports.findOneSlide = async(slidesId) => {
     return models.slides.findOne({
         attributes: ["slides_id", "content"],
@@ -217,4 +224,18 @@ exports.findOneSlide = async(slidesId) => {
         slides_id: slidesId,},
         raw: true
     });
+}
+
+exports.getSlidePresent = async(presents_id) => {
+    const index = await models.slide_present.findOne({
+        where: {
+            presents_id
+        }
+    });
+    const slides = await this.getAllSlideInPresent(presents_id);
+    const parse = await this.parseQuestionAndOption(slides);
+    return {
+        indexSlide: index,
+        listOfSlides: parse
+    };
 }
