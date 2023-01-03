@@ -227,3 +227,14 @@ exports.createResetPasswordToken = async (email) => {
   }
   return "";
 }
+
+exports.createRegisterToken = async (userId) => {
+  const registerToken = JWT.sign (
+    {
+      id: userId,
+      exp: Math.floor(Date.now() / 1000) + 15 * 60
+    },
+    process.env.SECRET_KEY   
+  );
+  return registerToken;
+}

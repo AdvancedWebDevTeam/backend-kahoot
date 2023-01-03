@@ -31,15 +31,22 @@ exports.registerUser = async (req, res) => {
       email,
       password
     );
-    const url = `${process.env.BASE_URL}/${result.user.users_id}/verify/${result.user.tokens}`;
-    await sendEmail(result.user.email, "Verify email", url);
-    res.status(201).json("An email has sent to verify your account");
+    const token = await usersService.createRegisterToken(result.user.users_id)
+    const url = `${process.env.BASE_URL}/${result.user.users_id}/verify/${token}`;
+    await sendEmail(result.user.email, "Verify account email", url);
+    res.status(201).json(url);
   } else {
     if(check.is_verified) {
       res.status(401).json("Already have account");
     }
     else {
-      res.status(401).json("Please visit email to verify");
+      const token = await usersService.createRegisterToken(check.users_id)
+      const url = `${process.env.BASE_URL}/${check.users_id}/verify/${token}`;
+      await sendEmail(check.email, "Verify account email", url);
+      res.status(401).json(
+        "Account was created but not verified. " + 
+        "Please visit email to verify. Token is about to expire in 15 minutes"
+      );
     }
   }
 };
