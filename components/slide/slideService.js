@@ -93,7 +93,7 @@ exports.parseQuestionAndOption = async (slides) => {
     return result;
 }
 
-exports.parseContent = async (data) => {
+async function parseContent(data) {
     
     for(let i = 0; i < data.length; i++)
     {
@@ -198,8 +198,7 @@ exports.deleteSlide = async(slidesId) => {
         return -1;
     });
 }
-
-exports.submitSlide = async(data) => {
+async function submitSlide(data) {
     return models.slides.update({
         content: data.content
     },
@@ -212,8 +211,8 @@ exports.submitSlide = async(data) => {
 
 exports.handleSubmitSlide = async(data, choice, presentId) => {
     data[0].options[choice] = (parseInt(data[0].options[choice]) + 1).toString();
-    let submitResult = await this.parseContent(data);
-    await this.submitSlide(submitResult[0]);
+    let submitResult = await parseContent(data);
+    await submitSlide(submitResult[0]);
     const listSlide = await this.getAllSlideInPresent(presentId);
     return result = await this.parseQuestionAndOption(listSlide);
 }
