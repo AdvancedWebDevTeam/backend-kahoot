@@ -24,10 +24,26 @@ function initModels(sequelize) {
   const messagechatbox = _messagechatbox(sequelize, DataTypes);
   const questions = _questions(sequelize, DataTypes);
 
-  presentations.belongsToMany(users, { as: "users_id_users", through: collaborators, foreignKey: "presents_id", otherKey: "users_id" });
-  users.belongsToMany(presentations, { as: "presents_id_presentations", through: collaborators, foreignKey: "users_id", otherKey: "presents_id" });
-  presentations.belongsTo(kahoot_groups, { as: "group", foreignKey: "groups_id"});
-  kahoot_groups.hasMany(presentations, { as: "presentations", foreignKey: "groups_id"})
+  presentations.belongsToMany(users, {
+    as: "users_id_users",
+    through: collaborators,
+    foreignKey: "presents_id",
+    otherKey: "users_id"
+  });
+  users.belongsToMany(presentations, {
+    as: "presents_id_presentations",
+    through: collaborators,
+    foreignKey: "users_id",
+    otherKey: "presents_id"
+  });
+  presentations.belongsTo(kahoot_groups, {
+    as: "group",
+    foreignKey: "groups_id"
+  });
+  kahoot_groups.hasMany(presentations, {
+    as: "presentations",
+    foreignKey: "groups_id"
+  });
   roles_groups_users.belongsTo(kahoot_groups, {
     as: "group",
     foreignKey: "groups_id"
@@ -36,29 +52,53 @@ function initModels(sequelize) {
     as: "roles_groups_users",
     foreignKey: "groups_id"
   });
-  collaborators.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
-  presentations.hasMany(collaborators, { as: "collaborators", foreignKey: "presents_id"});
-  messagechatbox.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
-  presentations.hasMany(messagechatbox, { as: "messagechatboxes", foreignKey: "presents_id"});
-  questions.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
-  presentations.hasMany(questions, { as: "questions", foreignKey: "presents_id"});
-  slides.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
-  presentations.hasMany(slides, { as: "slides", foreignKey: "presents_id"});
+  collaborators.belongsTo(presentations, {
+    as: "present",
+    foreignKey: "presents_id"
+  });
+  presentations.hasMany(collaborators, {
+    as: "collaborators",
+    foreignKey: "presents_id"
+  });
+  messagechatbox.belongsTo(presentations, {
+    as: "present",
+    foreignKey: "presents_id"
+  });
+  presentations.hasMany(messagechatbox, {
+    as: "messagechatboxes",
+    foreignKey: "presents_id"
+  });
+  questions.belongsTo(presentations, {
+    as: "present",
+    foreignKey: "presents_id"
+  });
+  presentations.hasMany(questions, {
+    as: "questions",
+    foreignKey: "presents_id"
+  });
+  slides.belongsTo(presentations, { as: "present", foreignKey: "presents_id" });
+  presentations.hasMany(slides, { as: "slides", foreignKey: "presents_id" });
   roles_groups_users.belongsTo(roles, { as: "role", foreignKey: "roles_id" });
   roles.hasMany(roles_groups_users, {
     as: "roles_groups_users",
     foreignKey: "roles_id"
   });
-  slides.belongsTo(slide_types, { as: "type", foreignKey: "types_id"});
-  slide_types.hasMany(slides, { as: "slides", foreignKey: "types_id"});
-  collaborators.belongsTo(users, { as: "user", foreignKey: "users_id"});
-  users.hasMany(collaborators, { as: "collaborators", foreignKey: "users_id"});
-  messagechatbox.belongsTo(users, { as: "user", foreignKey: "users_id"});
-  users.hasMany(messagechatbox, { as: "messagechatboxes", foreignKey: "users_id"});
-  presentations.belongsTo(users, { as: "user", foreignKey: "creators_id"});
-  users.hasMany(presentations, { as: "presentations", foreignKey: "creators_id"});
-  questions.belongsTo(users, { as: "user", foreignKey: "users_id"});
-  users.hasMany(questions, { as: "questions", foreignKey: "users_id"});
+  slides.belongsTo(slide_types, { as: "type", foreignKey: "types_id" });
+  slide_types.hasMany(slides, { as: "slides", foreignKey: "types_id" });
+  collaborators.belongsTo(users, { as: "user", foreignKey: "users_id" });
+  users.hasMany(collaborators, { as: "collaborators", foreignKey: "users_id" });
+  messagechatbox.belongsTo(users, { as: "user", foreignKey: "users_id" });
+  users.hasMany(messagechatbox, {
+    as: "messagechatboxes",
+    foreignKey: "users_id"
+  });
+  presentations.belongsTo(users, { as: "user", foreignKey: "creators_id" });
+  users.hasMany(presentations, {
+    as: "presentations",
+    foreignKey: "creators_id"
+  });
+  questions.belongsTo(users, { as: "user", foreignKey: "users_id" });
+  users.hasMany(questions, { as: "questions", foreignKey: "users_id" });
   roles_groups_users.belongsTo(users, { as: "user", foreignKey: "users_id" });
   users.hasMany(roles_groups_users, {
     as: "roles_groups_users",

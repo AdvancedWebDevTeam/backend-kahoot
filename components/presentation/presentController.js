@@ -21,7 +21,7 @@ exports.getMyPresentation = async (req, res) => {
   const { userId } = req.params;
 
   const presentations = await presentService.getMyPresentation(userId);
-  
+
   res.status(200).json(presentations);
 };
 
@@ -69,4 +69,16 @@ exports.getChat = async (req, res) => {
   const {presentID} = req.params;
   const result = await presentService.findOneChat(presentID);
   res.json(result);
+};
+
+exports.updateCollaborators = async (req, res) => {
+  const { id } = req.params;
+  const { collaborators } = req.body;
+
+  try {
+    const result = await presentService.updateCollaborators(id, collaborators);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to update collaborators" });
+  }
 };
