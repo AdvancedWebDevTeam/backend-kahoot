@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { models } = require("../../models");
+const { models, sequelize } = require("../../models");
 
 const questionsModel = models.questions;
 
@@ -28,4 +28,22 @@ exports.getQuestionsOfPresentation = async (id) => {
     },
     raw: true
   });
+};
+
+exports.updateQuestionsOfPresentation = async (presentId, questions) => {
+  const transaction = await sequelize.transaction();
+  try {
+    await questionsModel.destroy({
+      where: {
+        presents_id: presentId
+      },
+      transaction
+    });
+    await questionsModel.bulkCreate(questions, { transaction });
+    await transaction.commit();
+    return true;
+  } catch (err) {
+    await transaction.rollback();
+    return false;
+  }
 };
