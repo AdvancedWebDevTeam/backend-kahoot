@@ -85,7 +85,7 @@ exports.createResetPasswordToken = async(req, res) => {
   const resetPaswordToken = await usersService.createResetPasswordToken(email);
   if(resetPaswordToken !== "") {
     const url = `${process.env.BASE_URL}/resetpassword/${resetPaswordToken}`;
-    //await sendEmail(email, "Reset password email", url);
+    await sendEmail(email, "Reset password email", url);
     res.status(200).json(url);
   } else {
     res.status(405).send("Fail to create reset password token");

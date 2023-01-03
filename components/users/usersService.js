@@ -200,12 +200,16 @@ exports.getAllUsers = async () => {
 exports.updatePassword = async (newpassword, userId) => {
   const hashPass = await bcrypt.hash(newpassword, 10);
 
-  const query_update = `update users set 
-  users_password = '${hashPass}' where users_id = '${userId}'`;
+  const [row] = await models.users.update(
+    {
+      users_password: hashPass
+    },
+    {
+      where: { users_id: userId }
+    }
+  )
 
-  const successfulRows = await sequelize.query(query_update, {}).then((v) => console.log(v));
-  console.log("success: ", successfulRows);
-  return successfulRows === 1;
+  return row === 1;
 }
 
 exports.createResetPasswordToken = async (email) => {
