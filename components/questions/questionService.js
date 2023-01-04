@@ -26,6 +26,7 @@ exports.getQuestionsOfPresentation = async (id) => {
     where: {
       presents_id: id
     },
+    order: [["questions_time", "DESC"]],
     raw: true
   });
 };
