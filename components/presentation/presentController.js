@@ -65,6 +65,12 @@ exports.deletePresentation = async (req, res) => {
   }
 };
 
+exports.getChat = async (req, res) => {
+  const {presentID} = req.params;
+  const result = await presentService.findOneChat(presentID);
+  res.json(result);
+};
+
 exports.updateCollaborators = async (req, res) => {
   const { id } = req.params;
   const { collaborators } = req.body;
