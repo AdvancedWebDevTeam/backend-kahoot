@@ -25,8 +25,9 @@ exports.parseQuestionAndOption = async (slides) => {
     {
         let question = "";
         let options = {};
-        let heading = "";
+        let headingOfHeading = "";
         let subheading = "";
+        let headingOfParagraph = "";
         let paragraph = "";
 
         switch(slides[i].types_id)
@@ -35,8 +36,9 @@ exports.parseQuestionAndOption = async (slides) => {
             {
                 slides[i]["question"] = question;
                 slides[i]["options"] = options;
+                slides[i]["headingOfHeading"] = headingOfHeading;
                 slides[i]["subheading"] = subheading;
-                slides[i]["heading"] = heading;
+                slides[i]["headingOfParagraph"] = headingOfParagraph;
                 slides[i]["paragraph"] = paragraph;
 
                 break;
@@ -50,8 +52,9 @@ exports.parseQuestionAndOption = async (slides) => {
                 
                 slides[i]["question"] = question;
                 slides[i]["options"] = options;
+                slides[i]["headingOfHeading"] = headingOfHeading;
                 slides[i]["subheading"] = subheading;
-                slides[i]["heading"] = heading;
+                slides[i]["headingOfParagraph"] = headingOfParagraph;
                 slides[i]["paragraph"] = paragraph;
 
                 break;
@@ -59,13 +62,14 @@ exports.parseQuestionAndOption = async (slides) => {
             case 2:
             {
                 const parseContent = JSON.parse(slides[i].content);
-                heading = parseContent["heading"];
+                headingOfHeading = parseContent["heading"];
                 subheading = parseContent["subheading"];
 
                 slides[i]["question"] = question;
                 slides[i]["options"] = options;
+                slides[i]["headingOfHeading"] = headingOfHeading;
                 slides[i]["subheading"] = subheading;
-                slides[i]["heading"] = heading;
+                slides[i]["headingOfParagraph"] = headingOfParagraph;
                 slides[i]["paragraph"] = paragraph;
 
                 break;
@@ -73,13 +77,14 @@ exports.parseQuestionAndOption = async (slides) => {
             case 3:
             {
                 const parseContent = JSON.parse(slides[i].content);
-                heading = parseContent["heading"];
+                headingOfParagraph = parseContent["heading"];
                 paragraph = parseContent["paragraph"];
 
                 slides[i]["question"] = question;
                 slides[i]["options"] = options;
+                slides[i]["headingOfHeading"] = headingOfHeading;
                 slides[i]["subheading"] = subheading;
-                slides[i]["heading"] = heading;
+                slides[i]["headingOfParagraph"] = headingOfParagraph;
                 slides[i]["paragraph"] = paragraph;
 
                 break;
@@ -125,7 +130,7 @@ exports.getNameAndCreator = async (presentId) => {
                 required: false,
             }
         ],
-        attributes: ["presents_name", 
+        attributes: ["presents_id", "presents_name", 
                     "groups_id",
                     [sequelize.literal("`group`.`groups_name`"), "groups_name"],
                     [sequelize.literal("`user`.`users_name`"), "users_name"],
@@ -219,7 +224,7 @@ exports.handleSubmitSlide = async(data, choice, presentId) => {
 
 exports.findOneSlide = async(slidesId) => {
     return models.slides.findOne({
-        attributes: ["slides_id", "content"],
+        attributes: ["slides_id", "content", "types_id"],
         where: {
         slides_id: slidesId,},
         raw: true
