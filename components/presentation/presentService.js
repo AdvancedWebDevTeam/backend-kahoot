@@ -13,7 +13,7 @@ exports.getPresentation = async (groupId) => {
       {
         model: models.users,
         as: "user",
-        attributes: ["users_name"],
+        attributes: ["users_name", "users_id"],
         required: true
       }
     ],
@@ -113,23 +113,25 @@ exports.addChatPresent = async (data) => {
     .query("call sp_addidmessagechatbox()", {})
     .then((v) => console.log(v));
   const chatbox = await models.messagechatbox.findOne({
-    where: { presents_id: null},
+    where: { presents_id: null },
     raw: true
   });
   const boxId = chatbox.messagechatbox_id;
-  const row = await models.messagechatbox.update({
-    presents_id: data.presents_id,
-    users_id: data.users_id,
-    content: data.content
-  },
-  {
-    where: {
-      messagechatbox_id: boxId
+  const row = await models.messagechatbox.update(
+    {
+      presents_id: data.presents_id,
+      users_id: data.users_id,
+      content: data.content
+    },
+    {
+      where: {
+        messagechatbox_id: boxId
+      }
     }
-  });
+  );
 
   return row > 0;
-}
+};
 
 exports.updatePresentation = async (presentation, field) => {
   presentation.set(field);
@@ -138,64 +140,91 @@ exports.updatePresentation = async (presentation, field) => {
 };
 
 exports.deletePresentation = async (presentID) => {
-  await models.slides.destroy({
-    where: {
-      presents_id: presentID
+  await models.slides
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        console.log(rowDeleted);
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
+  await models.slide_present
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        console.log(rowDeleted);
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
+  await models.messagechatbox.update(
+    {
+      presents_id: null
+    },
+    {
+      where: {
+        presents_id: presentID
+      }
     }
-  }).then(function(rowDeleted) {
-    console.log(rowDeleted);
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
-  await models.slide_present.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    console.log(rowDeleted);
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
-  await models.messagechatbox.update({
-    presents_id: null
-  },
-  {
-    where: {
-      presents_id: presentID
-    }
-  });
-  await models.questions.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    console.log(rowDeleted);
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
-  await models.collaborators.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    console.log(rowDeleted);
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
-  await models.presentations.destroy({
-    where: {
-      presents_id: presentID
-    }
-  }).then(function(rowDeleted) {
-    return rowDeleted;
-  }, function(error) {
-    console.log(error);
-    return -1;
-  });
+  );
+  await models.questions
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        console.log(rowDeleted);
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
+  await models.collaborators
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        console.log(rowDeleted);
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
+  await models.presentations
+    .destroy({
+      where: {
+        presents_id: presentID
+      }
+    })
+    .then(
+      function (rowDeleted) {
+        return rowDeleted;
+      },
+      function (error) {
+        console.log(error);
+        return -1;
+      }
+    );
 };
 
 exports.addSlidePresent = async (presents_id, index_slide) => {
@@ -205,41 +234,49 @@ exports.addSlidePresent = async (presents_id, index_slide) => {
     }
   });
   if (!element) {
-    await models.slide_present.create({
-      presents_id,
-      index_slide
-    }).then(function(){
-      return 1;
-    }).catch(err => {
-      console.log(err);
-      return -1;
-    });
+    await models.slide_present
+      .create({
+        presents_id,
+        index_slide
+      })
+      .then(function () {
+        return 1;
+      })
+      .catch((err) => {
+        console.log(err);
+        return -1;
+      });
   } else {
-    await models.slide_present.update({
-      index_slide
-    },
-    {
-      where: {
-        presents_id
-      }
-    }).then(function(){
-      return 1;
-    }).catch(err => {
-      console.log(err);
-      return -1;
-    });
+    await models.slide_present
+      .update(
+        {
+          index_slide
+        },
+        {
+          where: {
+            presents_id
+          }
+        }
+      )
+      .then(function () {
+        return 1;
+      })
+      .catch((err) => {
+        console.log(err);
+        return -1;
+      });
   }
 };
 
-exports.findOneChat = async(data) => {
-  const chat =  await models.messagechatbox.findAll({
-    where: {presents_id: data},
+exports.findOneChat = async (data) => {
+  const chat = await models.messagechatbox.findAll({
+    where: { presents_id: data },
     raw: true
   });
   const result = [];
   for (let i = 0; i < chat.length; i++) {
     const user = await models.users.findOne({
-      where: {users_id: chat[i].users_id},
+      where: { users_id: chat[i].users_id },
       raw: true
     });
     result.push({

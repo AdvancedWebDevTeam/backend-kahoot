@@ -77,10 +77,9 @@ async function InviteUsers(req, res) {
 
   const groups = await groupService.getGroupsOfUser(id);
 
-  const isOwner = groups.find(function (group) {
+  const isOwner = groups.find((group) => {
     return group.groups_name === groupName;
   });
-  console.log(isOwner);
 
   if (!isOwner) {
     res.json("Input Group Name is not your Group or not exists.");
@@ -111,6 +110,17 @@ async function kickUserFromGroup(req, res) {
   }
 }
 
+async function getOwnerAndCoOwnersInGroup(req, res) {
+  const { groupId } = req.params;
+  try {
+    const coOwners = await groupService.getOwnerAndCoOwnersInGroup(groupId);
+    res.status(200).json(coOwners);
+  } catch (e) {
+    const status = e.cause === "server" ? 500 : 400;
+    res.status(status).json({ message: e.message });
+  }
+}
+
 module.exports = {
   createGroup,
   getListOfGroups,
@@ -119,5 +129,6 @@ module.exports = {
   getSpecificUserInGroup,
   getGroupsOfUser,
   InviteUsers,
-  kickUserFromGroup
+  kickUserFromGroup,
+  getOwnerAndCoOwnersInGroup
 };

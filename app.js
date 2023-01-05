@@ -5,7 +5,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 
-
+const http = require("http");
+const { Server } = require("socket.io");
 const indexRouter = require("./components/home/index");
 const usersRouter = require("./components/users/usersRouter");
 const authRouter = require("./components/auth/authRouter");
@@ -14,11 +15,11 @@ const rolesRouter = require("./components/roles/rolesRouter");
 const presentationRouter = require("./components/presentation/presentRouter");
 const slideRouter = require("./components/slide/slideRouter");
 const handlerSocket = require("./components/socket/handleSocket");
+const questionsRouter = require("./components/questions/questionsRouter");
 require("dotenv").config();
 
 const app = express();
-const server = require("http").Server(app);
-const { Server } = require("socket.io");
+const server = http.Server(app);
 
 const io = new Server(server, {
   cors: {
@@ -51,6 +52,7 @@ app.use("/groups", groupRouter);
 app.use("/roles", rolesRouter);
 app.use("/presentations", presentationRouter);
 app.use("/slides", slideRouter);
+app.use("/questions", questionsRouter);
 
 // Socket
 const onConnection = (socket) => {

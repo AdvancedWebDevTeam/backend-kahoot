@@ -1,4 +1,5 @@
-const { models } = require("../../models");
+const { Op } = require("sequelize");
+const { models, sequelize } = require("../../models");
 
 async function isUserInGroup(groupId, userId) {
   const user = await models.roles_groups_users.findOne({
@@ -86,6 +87,27 @@ async function getGroupsOfUser(userId) {
   });
 }
 
+async function getOwnerAndCoOwnersInGroup(groupId) {
+  return models.roles_groups_users.findAll({
+    attributes: [
+      [sequelize.col("user.users_name"), "username"],
+      [sequelize.col("user.users_id"), "userId"],
+      [sequelize.col("user.email"), "roleName"]
+    ],
+    where: {
+      groups_id: groupId,
+      roles_id: { [Op.lte]: 2 }
+    },
+    include: [
+      {
+        model: models.users,
+        as: "user",
+        attributes: []
+      }
+    ]
+  });
+}
+
 module.exports = {
   createNewGroup,
   getGroupsInDB,
@@ -93,5 +115,6 @@ module.exports = {
   getAllUsersInGroup,
   existsGroupOfId,
   getGroupsOfUser,
-  isUserInGroup
+  isUserInGroup,
+  getOwnerAndCoOwnersInGroup
 };
