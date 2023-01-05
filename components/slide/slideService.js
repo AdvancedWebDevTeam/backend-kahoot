@@ -130,7 +130,7 @@ exports.getNameAndCreator = async (presentId) => {
                 required: false,
             }
         ],
-        attributes: ["presents_name", 
+        attributes: ["presents_id", "presents_name", 
                     "groups_id",
                     [sequelize.literal("`group`.`groups_name`"), "groups_name"],
                     [sequelize.literal("`user`.`users_name`"), "users_name"],
@@ -224,7 +224,7 @@ exports.handleSubmitSlide = async(data, choice, presentId) => {
 
 exports.findOneSlide = async(slidesId) => {
     return models.slides.findOne({
-        attributes: ["slides_id", "content"],
+        attributes: ["slides_id", "content", "types_id"],
         where: {
         slides_id: slidesId,},
         raw: true
