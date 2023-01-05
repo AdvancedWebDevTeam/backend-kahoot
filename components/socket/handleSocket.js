@@ -15,7 +15,7 @@ module.exports = (io, socket) => {
       }
       for(let j = 0; j < list.length; j++){
         if(list[j] !== currentUserId){
-          io.to(list[j]).emit("NotifyPresentation", presentInfo)
+          io.to(list[j]).emit("NotifyPresentation", presentInfo);
         }
       }
     }
