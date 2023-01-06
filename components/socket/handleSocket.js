@@ -15,8 +15,7 @@ module.exports = (io, socket) => {
       }
       for(let j = 0; j < list.length; j++){
         if(list[j] !== currentUserId){
-          io.to(list[j]).emit("NotifyPresentation", 
-          `${presentInfo.presents_name} is presenting in group ${presentInfo.groups_name}`)
+          io.to(list[j]).emit("NotifyPresentation", presentInfo);
         }
       }
     }
