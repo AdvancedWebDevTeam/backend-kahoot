@@ -121,6 +121,17 @@ async function getOwnerAndCoOwnersInGroup(req, res) {
   }
 }
 
+async function deleteGroup(req, res) {
+  const { id } = req.params;
+  try {
+    await groupService.deleteGroup(id);
+    res.status(200).json({ message: "Group deleted" });
+  } catch (e) {
+    const status = e.cause === "server" ? 500 : 400;
+    res.status(status).json({ message: e.message });
+  }
+}
+
 module.exports = {
   createGroup,
   getListOfGroups,
@@ -130,5 +141,6 @@ module.exports = {
   getGroupsOfUser,
   InviteUsers,
   kickUserFromGroup,
-  getOwnerAndCoOwnersInGroup
+  getOwnerAndCoOwnersInGroup,
+  deleteGroup
 };
