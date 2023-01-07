@@ -82,7 +82,8 @@ async function getGroupsOfUser(userId) {
   // from groupIds, get more info about each group
   return models.kahoot_groups.findAll({
     where: {
-      groups_id: groupIdArray
+      groups_id: groupIdArray,
+      is_deleted: false
     }
   });
 }
@@ -108,6 +109,16 @@ async function getOwnerAndCoOwnersInGroup(groupId) {
   });
 }
 
+async function deleteGroup(id) {
+  const group = await getGroupById(id);
+  if (group) {
+    group.is_deleted = true;
+    await group.save();
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
   createNewGroup,
   getGroupsInDB,
@@ -116,5 +127,6 @@ module.exports = {
   existsGroupOfId,
   getGroupsOfUser,
   isUserInGroup,
-  getOwnerAndCoOwnersInGroup
+  getOwnerAndCoOwnersInGroup,
+  deleteGroup
 };
