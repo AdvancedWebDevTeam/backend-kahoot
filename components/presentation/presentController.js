@@ -66,7 +66,7 @@ exports.deletePresentation = async (req, res) => {
 };
 
 exports.getChat = async (req, res) => {
-  const {presentID} = req.params;
+  const { presentID } = req.params;
   const result = await presentService.findOneChat(presentID);
   res.json(result);
 };

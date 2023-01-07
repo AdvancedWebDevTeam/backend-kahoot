@@ -6,7 +6,7 @@ const groupController = require("./groupController");
 router.post("/create", groupController.createGroup);
 router.post("/:id/invite", groupController.InviteUsers);
 
-router.put("/:id/delete", groupController.deleteGroup);
+router.delete("/:id", groupController.deleteGroup);
 
 router.get("/all", groupController.getListOfGroups);
 router.get("/:id", groupController.getGroupDetails);
