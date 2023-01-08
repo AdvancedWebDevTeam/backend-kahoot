@@ -10,6 +10,7 @@ const _slide_present = require("./slide-present");
 const _collaborators = require("./collaborators");
 const _messagechatbox = require("./messagechatbox");
 const _questions = require("./questions");
+const _submit_content = require("./submit_content");
 
 function initModels(sequelize) {
   const kahoot_groups = _kahoot_groups(sequelize, DataTypes);
@@ -23,6 +24,7 @@ function initModels(sequelize) {
   const collaborators = _collaborators(sequelize, DataTypes);
   const messagechatbox = _messagechatbox(sequelize, DataTypes);
   const questions = _questions(sequelize, DataTypes);
+  const submit_content = _submit_content(sequelize, DataTypes);
 
   presentations.belongsToMany(users, {
     as: "users_id_users",
@@ -30,12 +32,14 @@ function initModels(sequelize) {
     foreignKey: "presents_id",
     otherKey: "users_id"
   });
+  slides.belongsToMany(users, { as: 'users_id_users_submit_contents', through: submit_content, foreignKey: "slides_id", otherKey: "users_id" });
   users.belongsToMany(presentations, {
     as: "presents_id_presentations",
     through: collaborators,
     foreignKey: "users_id",
     otherKey: "presents_id"
   });
+  users.belongsToMany(slides, { as: 'slides_id_slides', through: submit_content, foreignKey: "users_id", otherKey: "slides_id" });
   presentations.belongsTo(kahoot_groups, {
     as: "group",
     foreignKey: "groups_id"
@@ -85,6 +89,8 @@ function initModels(sequelize) {
   });
   slides.belongsTo(slide_types, { as: "type", foreignKey: "types_id" });
   slide_types.hasMany(slides, { as: "slides", foreignKey: "types_id" });
+  submit_content.belongsTo(slides, { as: "slide", foreignKey: "slides_id"});
+  slides.hasMany(submit_content, { as: "submit_contents", foreignKey: "slides_id"});
   collaborators.belongsTo(users, { as: "user", foreignKey: "users_id" });
   users.hasMany(collaborators, { as: "collaborators", foreignKey: "users_id" });
   messagechatbox.belongsTo(users, { as: "user", foreignKey: "users_id" });
@@ -104,6 +110,9 @@ function initModels(sequelize) {
     as: "roles_groups_users",
     foreignKey: "users_id"
   });
+
+  submit_content.belongsTo(users, { as: "user", foreignKey: "users_id"});
+  users.hasMany(submit_content, { as: "submit_contents", foreignKey: "users_id"});
 
   slide_present.belongsTo(presentations, {as: "presentations", foreignKey: "presents_id"})
 
