@@ -6,8 +6,10 @@ var _presentations = require("./presentations");
 var _questions = require("./questions");
 var _roles = require("./roles");
 var _roles_groups_users = require("./roles_groups_users");
+var _slide_present = require("./slide_present");
 var _slide_types = require("./slide_types");
 var _slides = require("./slides");
+var _submit_content = require("./submit_content");
 var _users = require("./users");
 
 function initModels(sequelize) {
@@ -18,12 +20,16 @@ function initModels(sequelize) {
   var questions = _questions(sequelize, DataTypes);
   var roles = _roles(sequelize, DataTypes);
   var roles_groups_users = _roles_groups_users(sequelize, DataTypes);
+  var slide_present = _slide_present(sequelize, DataTypes);
   var slide_types = _slide_types(sequelize, DataTypes);
   var slides = _slides(sequelize, DataTypes);
+  var submit_content = _submit_content(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
   presentations.belongsToMany(users, { as: 'users_id_users', through: collaborators, foreignKey: "presents_id", otherKey: "users_id" });
+  slides.belongsToMany(users, { as: 'users_id_users_submit_contents', through: submit_content, foreignKey: "slides_id", otherKey: "users_id" });
   users.belongsToMany(presentations, { as: 'presents_id_presentations', through: collaborators, foreignKey: "users_id", otherKey: "presents_id" });
+  users.belongsToMany(slides, { as: 'slides_id_slides', through: submit_content, foreignKey: "users_id", otherKey: "slides_id" });
   presentations.belongsTo(kahoot_groups, { as: "group", foreignKey: "groups_id"});
   kahoot_groups.hasMany(presentations, { as: "presentations", foreignKey: "groups_id"});
   roles_groups_users.belongsTo(kahoot_groups, { as: "group", foreignKey: "groups_id"});
@@ -34,12 +40,16 @@ function initModels(sequelize) {
   presentations.hasMany(messagechatbox, { as: "messagechatboxes", foreignKey: "presents_id"});
   questions.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
   presentations.hasMany(questions, { as: "questions", foreignKey: "presents_id"});
+  slide_present.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
+  presentations.hasOne(slide_present, { as: "slide_present", foreignKey: "presents_id"});
   slides.belongsTo(presentations, { as: "present", foreignKey: "presents_id"});
   presentations.hasMany(slides, { as: "slides", foreignKey: "presents_id"});
   roles_groups_users.belongsTo(roles, { as: "role", foreignKey: "roles_id"});
   roles.hasMany(roles_groups_users, { as: "roles_groups_users", foreignKey: "roles_id"});
   slides.belongsTo(slide_types, { as: "type", foreignKey: "types_id"});
   slide_types.hasMany(slides, { as: "slides", foreignKey: "types_id"});
+  submit_content.belongsTo(slides, { as: "slide", foreignKey: "slides_id"});
+  slides.hasMany(submit_content, { as: "submit_contents", foreignKey: "slides_id"});
   collaborators.belongsTo(users, { as: "user", foreignKey: "users_id"});
   users.hasMany(collaborators, { as: "collaborators", foreignKey: "users_id"});
   messagechatbox.belongsTo(users, { as: "user", foreignKey: "users_id"});
@@ -50,6 +60,8 @@ function initModels(sequelize) {
   users.hasMany(questions, { as: "questions", foreignKey: "users_id"});
   roles_groups_users.belongsTo(users, { as: "user", foreignKey: "users_id"});
   users.hasMany(roles_groups_users, { as: "roles_groups_users", foreignKey: "users_id"});
+  submit_content.belongsTo(users, { as: "user", foreignKey: "users_id"});
+  users.hasMany(submit_content, { as: "submit_contents", foreignKey: "users_id"});
 
   return {
     collaborators,
@@ -59,8 +71,10 @@ function initModels(sequelize) {
     questions,
     roles,
     roles_groups_users,
+    slide_present,
     slide_types,
     slides,
+    submit_content,
     users,
   };
 }
