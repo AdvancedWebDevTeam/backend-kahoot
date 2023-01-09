@@ -54,25 +54,35 @@ exports.deleteSlide = async (req, res) => {
 
 exports.submitSlide = async (req, res) => {
     const { presentId ,slidesId } = req.params;
-    const { question, choice } = req.body;
-    let slide = await slideService.findOneSlide(slidesId);
-    let arraySlide = [slide];
-    if (!slide) {
-        res.json("Failed to submit or slide is not exists");
-    } else {
-        let data = await slideService.parseQuestionAndOption(arraySlide);
-        if (question === data[0].question) {
-            const result = await slideService.handleSubmitSlide(data, choice, presentId);
-            res.io.emit("submitSlide", result);
-            res.json("Submit success.");
+    const { question, choice, date, userID } = req.body;
+    if (await slideService.addSubmitContent(slidesId, userID, date, choice)) {
+        let slide = await slideService.findOneSlide(slidesId);
+        let arraySlide = [slide];
+        if (!slide) {
+            res.json("Failed to submit or slide is not exists");
         } else {
-            res.json("Failed to submit or question is not exists");
+            let data = await slideService.parseQuestionAndOption(arraySlide);
+            if (question === data[0].question) {
+                const result = await slideService.handleSubmitSlide(data, choice, presentId);
+                res.io.emit("submitSlide", result);
+                res.json("Submit success.");
+            } else {
+                res.json("Failed to submit or question is not exists");
+            }
         }
+    } else {
+        res.json("Failed to submit");
     }
 }
 
 exports.getSlidePresent = async (req, res) => {
     const {presentID} = req.params;
     const result = await slideService.getSlidePresent(presentID);
+    res.json(result);
+};
+
+exports.getSubmitContent = async (req, res) => {
+    const { slideId } = req.params;
+    const result = await slideService.getSubmitContent(slideId);
     res.json(result);
 };

@@ -127,7 +127,8 @@ function initModels(sequelize) {
     slide_types,
     slides,
     users,
-    slide_present
+    slide_present,
+    submit_content
   };
 }
 module.exports = initModels;

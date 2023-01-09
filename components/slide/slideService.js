@@ -219,7 +219,24 @@ exports.handleSubmitSlide = async(data, choice, presentId) => {
     let submitResult = await parseContent(data);
     await submitSlide(submitResult[0]);
     const listSlide = await this.getAllSlideInPresent(presentId);
-    return result = await this.parseQuestionAndOption(listSlide);
+    return await this.parseQuestionAndOption(listSlide);
+}
+
+exports.addSubmitContent = async(slides_id, users_id, time_submit, choice) => {
+    const submitContent = await models.submit_content.findOne({
+        where: {
+            slides_id,
+            users_id
+        },
+        raw: true
+    });
+    if (!submitContent) {
+        await models.submit_content.create({
+            slides_id, users_id, time_submit, choice
+        });
+        return true;
+    }
+    return false;
 }
 
 exports.findOneSlide = async(slidesId) => {
@@ -243,4 +260,13 @@ exports.getSlidePresent = async(presents_id) => {
         indexSlide: index,
         listOfSlides: parse
     };
+}
+
+exports.getSubmitContent = async(slideId) => {
+    return await models.submit_content.findAll({
+        where: {
+            slides_id: slideId
+        },
+        raw: true
+    });
 }
