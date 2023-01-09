@@ -1,10 +1,14 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('submit_content', {
-    slides_id: {
+    submit_id: {
       type: DataTypes.CHAR(36),
       allowNull: false,
-      primaryKey: true,
+      primaryKey: true
+    },
+    slides_id: {
+      type: DataTypes.CHAR(36),
+      allowNull: true,
       references: {
         model: 'slides',
         key: 'slides_id'
@@ -12,8 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     users_id: {
       type: DataTypes.CHAR(36),
-      allowNull: false,
-      primaryKey: true,
+      allowNull: true,
       references: {
         model: 'users',
         key: 'users_id'
@@ -37,8 +40,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "slides_id" },
-          { name: "users_id" },
+          { name: "submit_id" },
         ]
       },
       {
@@ -46,6 +48,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "users_id" },
+        ]
+      },
+      {
+        name: "slides_id",
+        using: "BTREE",
+        fields: [
+          { name: "slides_id" },
         ]
       },
     ]

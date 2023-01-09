@@ -192,12 +192,24 @@ exports.updateSlide = async (slideId, presentId, typeId, content) => {
 }
 
 exports.deleteSlide = async(slidesId) => {
+    let row = 0;
+    await models.submit_content.destroy({
+        where: {
+            slides_id: slidesId
+        }
+    }).then(function(rowDeleted) {
+        row += rowDeleted;
+    }, function(error) {
+        console.log(error);
+        return -1;
+    });
     await models.slides.destroy({
         where: {
             slides_id: slidesId
         }
     }).then(function(rowDeleted) {
-        return rowDeleted;
+        row += rowDeleted;
+        return row;
     }, function(error) {
         console.log(error);
         return -1;
@@ -219,7 +231,29 @@ exports.handleSubmitSlide = async(data, choice, presentId) => {
     let submitResult = await parseContent(data);
     await submitSlide(submitResult[0]);
     const listSlide = await this.getAllSlideInPresent(presentId);
-    return result = await this.parseQuestionAndOption(listSlide);
+    return await this.parseQuestionAndOption(listSlide);
+}
+
+exports.addSubmitContent = async(slides_id, users_id, time_submit, choice) => {
+    await sequelize
+        .query("call sp_addidsubmitcontent()", {})
+        .then((v) => console.log(v));
+    const element = await models.submit_content.findOne({
+        where: {
+            slides_id: null,
+            users_id: null
+        },
+        raw: true
+    });
+    const successRow = await models.submit_content.update({
+        slides_id, users_id, time_submit, choice
+    },
+    {
+        where: {
+            submit_id: element.submit_id
+        }
+    });
+    return successRow > 0;
 }
 
 exports.findOneSlide = async(slidesId) => {
@@ -243,4 +277,30 @@ exports.getSlidePresent = async(presents_id) => {
         indexSlide: index,
         listOfSlides: parse
     };
+}
+
+exports.getSubmitContent = async(slideId) => {
+    const submitContent = await models.submit_content.findAll({
+        where: {
+            slides_id: slideId
+        },
+        raw: true
+    });
+    const result = [];
+    for (let i = 0; i < submitContent.length; i++) {
+        const temp = await models.users.findOne({
+            where: {
+                users_id: submitContent[i].users_id
+            },
+            raw: true
+        });
+        result.push({
+            users_id: submitContent[i].users_id,
+            users_name: temp?.users_name,
+            choice: submitContent[i].choice,
+            slides_id: submitContent[i].slides_id,
+            time_submit: submitContent[i].time_submit
+        })
+    }
+    return result;
 }
