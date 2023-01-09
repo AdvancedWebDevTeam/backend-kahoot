@@ -114,7 +114,8 @@ function initModels(sequelize) {
   submit_content.belongsTo(users, { as: "user", foreignKey: "users_id"});
   users.hasMany(submit_content, { as: "submit_contents", foreignKey: "users_id"});
 
-  slide_present.belongsTo(presentations, {as: "presentations", foreignKey: "presents_id"})
+  slide_present.belongsTo(presentations, {as: "presentations", foreignKey: "presents_id"});
+  presentations.hasOne(slide_present, { as: "slide_present", foreignKey: "presents_id"});
 
   return {
     collaborators,

@@ -223,20 +223,25 @@ exports.handleSubmitSlide = async(data, choice, presentId) => {
 }
 
 exports.addSubmitContent = async(slides_id, users_id, time_submit, choice) => {
-    const submitContent = await models.submit_content.findOne({
+    await sequelize
+        .query("call sp_addidsubmitcontent()", {})
+        .then((v) => console.log(v));
+    const element = await models.submit_content.findOne({
         where: {
-            slides_id,
-            users_id
+            slides_id: null,
+            users_id: null
         },
         raw: true
     });
-    if (!submitContent) {
-        await models.submit_content.create({
-            slides_id, users_id, time_submit, choice
-        });
-        return true;
-    }
-    return false;
+    const successRow = await models.submit_content.update({
+        slides_id, users_id, time_submit, choice
+    },
+    {
+        where: {
+            submit_id: element.submit_id
+        }
+    });
+    return successRow > 0;
 }
 
 exports.findOneSlide = async(slidesId) => {
@@ -263,10 +268,27 @@ exports.getSlidePresent = async(presents_id) => {
 }
 
 exports.getSubmitContent = async(slideId) => {
-    return await models.submit_content.findAll({
+    const submitContent = await models.submit_content.findAll({
         where: {
             slides_id: slideId
         },
         raw: true
     });
+    const result = [];
+    for (let i = 0; i < submitContent.length; i++) {
+        const temp = await models.users.findOne({
+            where: {
+                users_id: submitContent[i].users_id
+            },
+            raw: true
+        });
+        result.push({
+            users_id: submitContent[i].users_id,
+            users_name: temp?.users_name,
+            choice: submitContent[i].choice,
+            slides_id: submitContent[i].slides_id,
+            time_submit: submitContent[i].time_submit
+        })
+    }
+    return result;
 }
