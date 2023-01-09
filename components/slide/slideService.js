@@ -192,7 +192,7 @@ exports.updateSlide = async (slideId, presentId, typeId, content) => {
 }
 
 exports.deleteSlide = async(slidesId) => {
-    const row = 0;
+    let row = 0;
     await models.submit_content.destroy({
         where: {
             slides_id: slidesId
