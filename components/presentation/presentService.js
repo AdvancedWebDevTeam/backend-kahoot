@@ -336,3 +336,16 @@ exports.updateCollaborators = async (id, collaborators) => {
     throw new Error(error.message);
   }
 };
+
+exports.makeGroupPresentationPublic = async (groupId) => {
+  return models.presentations.update(
+    {
+      groups_id: null
+    },
+    {
+      where: {
+        groups_id: groupId
+      }
+    }
+  );
+};

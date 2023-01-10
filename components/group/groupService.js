@@ -1,5 +1,8 @@
 const { Op } = require("sequelize");
 const { models, sequelize } = require("../../models");
+const {
+  makeGroupPresentationPublic
+} = require("../presentation/presentService");
 
 async function isUserInGroup(groupId, userId) {
   const user = await models.roles_groups_users.findOne({
@@ -112,6 +115,8 @@ async function getOwnerAndCoOwnersInGroup(groupId) {
 async function deleteGroup(id) {
   const group = await getGroupById(id);
   if (group) {
+    await makeGroupPresentationPublic(id);
+
     group.is_deleted = true;
     await group.save();
     return true;
