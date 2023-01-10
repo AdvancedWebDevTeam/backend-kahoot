@@ -78,7 +78,7 @@ async function InviteUsers(req, res) {
   const groups = await groupService.getGroupsOfUser(id);
 
   const isOwner = groups.find((group) => {
-    return group.groups_name === groupName;
+    return group.groups_name.toLowerCase() === groupName.toLowerCase();
   });
 
   if (!isOwner) {
