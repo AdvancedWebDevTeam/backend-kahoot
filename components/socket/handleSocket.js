@@ -46,6 +46,9 @@ module.exports = (io, socket) => {
       }
     }
   }
+  const logOut = (userID) => {
+    socket.leave(userID);
+  }
   console.log("-----------------------------User connected.--------------------------");
 
   socket.on("clickedSlide", clickedSlide);
@@ -53,4 +56,5 @@ module.exports = (io, socket) => {
   socket.on("Join", JoinRoom);
   socket.on("send_message", SendMessage);
   socket.on('disconnect', disconnect);
+  socket.on('LogOut', logOut);
 }
