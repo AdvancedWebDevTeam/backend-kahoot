@@ -83,7 +83,7 @@ exports.addPresentation = async (groupId, userId, presentName) => {
 
   const present = await models.presentations.findOne({
     attributes: ["presents_id"],
-    where: { groups_id: null },
+    where: { creators_id: null },
     raw: true
   });
 
